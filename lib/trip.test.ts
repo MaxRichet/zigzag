@@ -17,8 +17,10 @@ import {
 const stop = (id: string, x = 0): Stop => ({ id, name: `Adresse ${id}`, city: "69006 Lyon", lngLat: [4.85 + x, 45.76] });
 const withStops = (...ids: string[]): TripState => ({ ...initialTrip, stops: ids.map((id, i) => stop(id, i)) });
 const ids = (state: { stops: Stop[] }) => state.stops.map((s) => s.id);
-const route = (legs: number): Route => ({
+const route = (legs: number, visits: Stop[] = []): Route => ({
   start: [4.8, 45.7],
+  visits,
+  skipped: [],
   savedS: 120,
   legs: Array.from({ length: legs }, () => ({ durationS: 300, distanceM: 2000, coordinates: [[4.8, 45.7], [4.81, 45.71]] })),
 });
@@ -64,15 +66,35 @@ describe("tripReducer", () => {
     expect(tripReducer(arr, { type: "setDeparture", value: "position" }).departure).toBe("position");
   });
 
-  it("applique l'ordre optimisé et garde le trajet", () => {
-    const state = tripReducer(withStops("a", "b", "c"), { type: "optimized", order: ["c", "a", "b"], route: route(3) });
+  it("applique l'ordre optimisé (services ignorés) et garde le trajet", () => {
+    const fuel = { ...stop("osm:N1"), category: "carburant" as const };
+    const visits = [stop("a"), fuel, stop("b")];
+    const state = tripReducer(withStops("a", "b", "c"), { type: "optimized", startId: "c", route: route(3, visits) });
     expect(ids(state)).toEqual(["c", "a", "b"]);
-    expect(state.route?.legs).toHaveLength(3);
+    expect(state.route?.visits).toHaveLength(3);
   });
 
   it("ignore un ordre qui ne correspond pas aux étapes", () => {
     const before = withStops("a", "b");
-    expect(tripReducer(before, { type: "optimized", order: ["a", "x"], route: route(2) })).toBe(before);
+    expect(tripReducer(before, { type: "optimized", startId: null, route: route(2, [stop("a"), stop("x")]) })).toBe(before);
+  });
+
+  it("ajoute et retire des services ; retirer l'adresse visée renvoie au meilleur endroit", () => {
+    let state = tripReducer(withStops("a", "b"), { type: "addService", request: { id: "s1", category: "cafe", beforeId: "b" } });
+    expect(state.services).toEqual([{ id: "s1", category: "cafe", beforeId: "b" }]);
+    expect(tripReducer(state, { type: "remove", id: "b" }).services[0].beforeId).toBeNull();
+    state = tripReducer(state, { type: "removeService", id: "s1" });
+    expect(state.services).toEqual([]);
+  });
+
+  it("un service ajouté à un trajet prêt remplace le trajet", () => {
+    const ready = { ...withStops("a", "b"), route: route(2, [stop("a"), stop("b")]) };
+    const next = tripReducer(ready, {
+      type: "serviceAdded",
+      request: { id: "s1", category: "carburant", beforeId: null },
+      route: route(3),
+    });
+    expect([next.services.length, next.route?.legs.length]).toEqual([1, 3]);
   });
 
   it("toute modification invalide le trajet et la progression", () => {
@@ -150,9 +172,12 @@ describe("couleurs", () => {
 
 describe("parseStoredTrip", () => {
   it("relit une tournée sauvegardée, trajet et progression compris", () => {
-    const state: TripState = { ...withStops("a", "b"), arrival: "start", route: route(3), progress: 1 };
+    const services = [{ id: "s1", category: "cafe" as const, beforeId: "b" }];
+    const visits = [stop("a", 0), { ...stop("osm:N1"), category: "cafe" as const }, stop("b", 1)];
+    const state: TripState = { ...withStops("a", "b"), services, arrival: "start", route: route(4, visits), progress: 1 };
     expect(parseStoredTrip(storedTrip(state))).toEqual({
       stops: state.stops,
+      services,
       departure: "position",
       arrival: "start",
       route: state.route,
@@ -165,7 +190,7 @@ describe("parseStoredTrip", () => {
   });
 
   it("écarte un trajet qui ne correspond plus aux étapes", () => {
-    const state: TripState = { ...withStops("a", "b"), route: route(5), progress: 0 };
+    const state: TripState = { ...withStops("a", "b"), route: route(5, [stop("a", 0), stop("b", 1)]), progress: 0 };
     expect(parseStoredTrip(storedTrip(state)).route).toBeUndefined();
   });
 
@@ -174,6 +199,7 @@ describe("parseStoredTrip", () => {
     expect(parseStoredTrip("{oups")).toEqual({});
     expect(parseStoredTrip(JSON.stringify({ stops: [stop("a"), { id: "b", lngLat: [1] }, null], departure: "x" }))).toEqual({
       stops: [stop("a")],
+      services: [],
     });
   });
 });

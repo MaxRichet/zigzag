@@ -25,3 +25,28 @@ export function CrossIcon({ size = 10, strokeWidth = 1.8 }: { size?: number; str
     </svg>
   );
 }
+
+export function PlusIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" aria-hidden="true">
+      <path d="M12 3v18M3 12h18" />
+    </svg>
+  );
+}
+
+/** Icône d'une catégorie de service (tracés définis dans lib/services-config.ts, constants). */
+export function ServiceIcon({ svg, size = 24 }: { svg: string; size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      dangerouslySetInnerHTML={{ __html: svg }}
+    />
+  );
+}

@@ -158,3 +158,23 @@
   padding: 20px 14px;
   font-size: 15px;
 }
+
+/* Bouton + : rond noir 52px ; ouvert, il devient un rond blanc bordure 3px avec une croix. */
+.plus {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--white);
+  cursor: pointer;
+}
+
+.plus[data-open] {
+  background: var(--white);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+}

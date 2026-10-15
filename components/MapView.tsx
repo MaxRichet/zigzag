@@ -12,7 +12,8 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef } from "react";
 import type { LngLat } from "@/lib/geo";
 import { mapStyle } from "@/lib/map-style";
-import { legColor, textColorOn, type LineFeature, type Stop } from "@/lib/trip";
+import { serviceCategory } from "@/lib/services-config";
+import { legColor, textColorOn, type LineFeature, type Visit } from "@/lib/trip";
 import styles from "./MapView.module.css";
 
 const FRANCE: [LngLat, LngLat] = [
@@ -36,8 +37,8 @@ setWorkerUrl(new URL("maplibre-gl/dist/maplibre-gl-worker.mjs", import.meta.url)
 type Props = {
   /** Point de départ (carré noir) : ma position ou la première adresse, null si inconnu. */
   start: LngLat | null;
-  /** Étapes à visiter, numérotées dans l'ordre. */
-  visits: Stop[];
+  /** Destinations dans l'ordre : adresses numérotées, services avec leur icône. */
+  visits: Visit[];
   /** Étape mise en avant (dernière ajoutée), affichée avec son nom. */
   highlightId: string | null;
   /** Étapes colorées selon leur tronçon (une fois le trajet calculé). */
@@ -160,7 +161,9 @@ export default function MapView({ start, visits, highlightId, colored, lines, fo
         markers.delete(id);
       }
     }
+    let number = 0;
     visits.forEach((stop, i) => {
+      if (!stop.category) number++;
       let marker = markers.get(stop.id);
       if (!marker) {
         marker = new Marker({ element: document.createElement("div") }).setLngLat(stop.lngLat).addTo(map);
@@ -168,7 +171,7 @@ export default function MapView({ start, visits, highlightId, colored, lines, fo
       } else {
         marker.setLngLat(stop.lngLat);
       }
-      renderStopMarker(marker.getElement(), stop, i + 1, stop.id === highlightId, colored ? legColor(i) : null);
+      renderStopMarker(marker.getElement(), stop, number, stop.id === highlightId, colored ? legColor(i) : null);
     });
   }, [visits, highlightId, colored]);
 
@@ -237,15 +240,19 @@ const collection = (features: LineFeature[]) => ({ type: "FeatureCollection" as 
  * Pastille numérotée : blanche avant calcul, pleine à la couleur de son tronçon après.
  * La dernière étape ajoutée est un point noir avec son nom.
  */
-function renderStopMarker(el: HTMLElement, stop: Stop, num: number, highlighted: boolean, color: string | null) {
+function renderStopMarker(el: HTMLElement, stop: Visit, num: number, highlighted: boolean, color: string | null) {
   // classList et pas className : MapLibre a posé ses propres classes sur l'élément.
   el.classList.toggle(styles.stop, !highlighted);
   el.classList.toggle(styles.newStop, highlighted);
   el.classList.toggle(styles.colored, color !== null && !highlighted);
   el.style.setProperty("--leg-color", color);
   el.style.setProperty("--leg-text", color && textColorOn(color));
-  el.setAttribute("aria-label", `Étape ${num} : ${stop.name}`);
-  if (highlighted) {
+  const category = stop.category ? serviceCategory(stop.category) : null;
+  el.setAttribute("aria-label", category ? `${category.label} : ${stop.name}` : `Étape ${num} : ${stop.name}`);
+  if (category) {
+    // Icône constante de lib/services-config.ts (pas de donnée externe).
+    el.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round">${category.icon}</svg>`;
+  } else if (highlighted) {
     const label = document.createElement("span");
     label.className = styles.label;
     label.textContent = stop.name;

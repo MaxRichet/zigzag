@@ -24,7 +24,7 @@ La police Switzer (Fontshare, licence ITF) n'est pas versionnée : sa licence in
 
 La recherche combine les adresses (Géoplateforme IGN, sans clé, via `/api/geocode` qui limite le débit par adresse IP et met les réponses en cache) et les commerces (géocodage MapTiler, avec la clé de la carte).
 
-Le calcul de la tournée passe par `/api/optimize` (matrice de durées ORS, puis ordre résolu dans `lib/tsp.ts` : exact jusqu'à 12 étapes libres, heuristique au-delà) et `/api/route` (tracé ORS). Quotas ORS gratuits, partagés par tous les utilisateurs : 500 calculs d'ordre et 2 000 tracés par jour.
+Le calcul de la tournée passe par `/api/optimize` (matrice de durées ORS, puis ordre résolu dans `lib/tsp.ts` : exact jusqu'à 12 étapes libres, heuristique au-delà) et `/api/route` (tracé ORS). Les services (carburant, boulangerie…) sont cherchés le long du tracé avec Photon (OpenStreetMap, sans clé, usage raisonnable demandé), puis départagés par une matrice ORS (`/api/services`) ; les catégories sont dans `lib/services-config.ts`. Quotas ORS gratuits, partagés par tous les utilisateurs : 500 matrices (calcul d'ordre ou service ajouté) et 2 000 tracés par jour.
 
 ## Vérifications avant livraison
 

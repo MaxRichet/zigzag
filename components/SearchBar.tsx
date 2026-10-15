@@ -5,7 +5,7 @@ import type { AddressSearch } from "@/hooks/useAddressSearch";
 import { distanceKm, formatDistance, type LngLat } from "@/lib/geo";
 import type { AddressResult } from "@/lib/geocoding";
 import { highlight } from "@/lib/text";
-import { CrossIcon, PinIcon, SearchIcon } from "./icons";
+import { CrossIcon, PinIcon, PlusIcon, SearchIcon } from "./icons";
 import styles from "./SearchBar.module.css";
 
 type Props = {
@@ -20,6 +20,9 @@ type Props = {
   existingIds: ReadonlySet<string>;
   /** Tournée pleine : plus d'ajout possible. */
   disabled: boolean;
+  /** Bouton + : ouvre (ou ferme) les arrêts de service. Absent si non fourni. */
+  onServices?: () => void;
+  servicesOpen: boolean;
   onSelect: (address: AddressResult) => void;
 };
 
@@ -35,6 +38,8 @@ export default function SearchBar({
   origin,
   existingIds,
   disabled,
+  onServices,
+  servicesOpen,
   onSelect,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -126,10 +131,23 @@ export default function SearchBar({
           </button>
         )}
       </div>
-      {open && (
+      {open ? (
         <button type="button" className={styles.cancel} onClick={close}>
           Annuler
         </button>
+      ) : (
+        onServices && (
+          <button
+            type="button"
+            className={styles.plus}
+            data-open={servicesOpen || undefined}
+            aria-label={servicesOpen ? "Fermer les arrêts de service" : "Ajouter un arrêt de service"}
+            aria-expanded={servicesOpen}
+            onClick={onServices}
+          >
+            {servicesOpen ? <CrossIcon size={16} strokeWidth={1.8} /> : <PlusIcon />}
+          </button>
+        )
       )}
 
       {showSuggestions && (

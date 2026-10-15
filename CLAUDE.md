@@ -20,6 +20,7 @@ Pas de compte utilisateur en V1. L'app doit être utilisable immédiatement à l
 - **Mode « Avant l'adresse X » et option « arrivée fixe »** : gardés, à dessiner dans le langage visuel du handoff.
 - **Recherche : adresses + lieux et commerces** (décision du 16/10/2026, remplace « adresses uniquement ») : adresses via la Géoplateforme IGN (proxy `/api/geocode`), commerces (« carrefour paris ») via le géocodage MapTiler limité aux points d'intérêt, appelé depuis le navigateur avec la clé publique. Une seule liste de suggestions.
 - **Géocodage** : `https://data.geopf.fr/geocodage/` (l'ancienne `api-adresse.data.gouv.fr` est fermée depuis fin janvier 2026).
+- **Services sur le trajet : lieux cherchés avec Photon (komoot, OpenStreetMap, sans clé)** (16/10/2026) au lieu d'ORS `pois`, qui ne renvoie plus aucun lieu en France. Le détour reste calculé par une matrice ORS, et le tracé par ORS `directions`. Le bouton + ouvre directement les arrêts de service (écran 8 du handoff) ; les adresses s'ajoutent par la barre de recherche.
 - **Police** : Switzer, auto-hébergée avec `next/font/local`.
 - **Tests** : Vitest sur les fonctions pures de `lib/`.
 

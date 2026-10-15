@@ -54,13 +54,19 @@ async function post(path: string, body: unknown): Promise<unknown> {
   throw new OrsError("unavailable");
 }
 
-/** Durées (s) de chaque point vers chaque autre, en voiture. */
-export async function durationMatrix(locations: LngLat[]): Promise<number[][]> {
+/** Durées (s) de chaque point vers chaque autre, en voiture ; null quand aucune route ne les relie. */
+export async function rawDurationMatrix(locations: LngLat[]): Promise<(number | null)[][]> {
   const data = (await post(`/matrix/${PROFILE}`, { locations, metrics: ["duration"] })) as {
     durations?: (number | null)[][];
   };
   const durations = data.durations;
   if (!Array.isArray(durations) || durations.length !== locations.length) throw new OrsError("unavailable");
+  return durations;
+}
+
+/** Durées (s) de chaque point vers chaque autre ; erreur « unroutable » si un point n'est pas relié. */
+export async function durationMatrix(locations: LngLat[]): Promise<number[][]> {
+  const durations = await rawDurationMatrix(locations);
   // Point hors réseau routier : ORS ne l'accroche pas, sa diagonale est null.
   const isolated = durations.findIndex((row, i) => row[i] === null);
   if (isolated !== -1) throw new OrsError("unroutable", isolated);

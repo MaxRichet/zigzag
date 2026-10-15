@@ -1,5 +1,7 @@
 import { formatClock, formatDuration } from "@/lib/format";
+import { serviceCategory } from "@/lib/services-config";
 import { legColor, type Route, type TripPlan } from "@/lib/trip";
+import { ServiceIcon } from "./icons";
 import styles from "./RouteList.module.css";
 
 type Vars = React.CSSProperties & Record<`--${string}`, string | undefined>;
@@ -15,22 +17,27 @@ export function RouteList({ plan, route, now }: { plan: TripPlan; route: Route; 
         <span className={styles.name}>Départ · {startName}</span>
         <span className={styles.meta}>{formatClock(now)}</span>
       </li>
-      {plan.visits.map((stop, i) => (
+      {plan.visits.map((stop, i) => {
+        // Les adresses sont numérotées ; un service porte l'icône de sa catégorie.
+        const category = stop.category ? serviceCategory(stop.category) : null;
+        const number = plan.visits.slice(0, i + 1).filter((v) => !v.category).length;
+        return (
         <li
           key={stop.id}
           className={styles.row}
           style={{ "--top": legColor(i), "--bottom": i < last ? legColor(i + 1) : undefined } as Vars}
         >
           <span className={styles.dot} style={{ "--color": legColor(i) } as Vars}>
-            {i + 1}
+            {category ? <ServiceIcon svg={category.icon} size={15} /> : number}
           </span>
           <span className={styles.texts}>
             <span className={styles.name}>{stop.name}</span>
-            <span className={styles.city}>{stop.city}</span>
+            <span className={styles.city}>{category ? [category.label, stop.city].filter(Boolean).join(" · ") : stop.city}</span>
           </span>
           <span className={styles.meta}>+{formatDuration(route.legs[i].durationS)}</span>
         </li>
-      ))}
+        );
+      })}
       {plan.returnToStart && (
         <li className={styles.start} data-end style={{ "--top": legColor(last) } as Vars}>
           <span className={styles.square} aria-hidden="true" />

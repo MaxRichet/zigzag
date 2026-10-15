@@ -4,8 +4,9 @@ import type { Dispatch } from "react";
 import { formatClock, formatDuration, formatKm } from "@/lib/format";
 import { navigationLinks } from "@/lib/navigation";
 import { countOrders, EXACT_LIMIT } from "@/lib/tsp";
+import { serviceCategory } from "@/lib/services-config";
 import { legColor, type Route, type Stop, type TripAction, type TripPlan, type TripState } from "@/lib/trip";
-import { CrossIcon } from "./icons";
+import { CrossIcon, ServiceIcon } from "./icons";
 import styles from "./Panel.module.css";
 import { ComputeList, RouteList } from "./RouteList";
 import StopList, { EmptyRoute } from "./StopList";
@@ -93,6 +94,7 @@ export function EditPanel({
           <p className={styles.newStopCity}>{newStop.city}</p>
         </div>
       )}
+      <ServiceRequests trip={trip} dispatch={dispatch} />
       {stops.length >= 2 && (
         <TripOptions trip={trip} startStop={startStop} hasPosition={hasPosition} dispatch={dispatch} />
       )}
@@ -111,6 +113,35 @@ export function EditPanel({
       </button>
       {stops.length < 2 && <p className={styles.hint}>2 adresses minimum</p>}
     </>
+  );
+}
+
+/** Services demandés, placés au prochain calcul. */
+function ServiceRequests({ trip, dispatch }: { trip: TripState; dispatch: Dispatch<TripAction> }) {
+  if (!trip.services.length) return null;
+  return (
+    <ul className={styles.requests} aria-label="Arrêts de service">
+      {trip.services.map((r) => {
+        const category = serviceCategory(r.category)!;
+        const before = r.beforeId ? trip.stops.find((s) => s.id === r.beforeId) : null;
+        return (
+          <li key={r.id} className={styles.request}>
+            <ServiceIcon svg={category.icon} size={22} />
+            <span className={styles.requestText}>
+              {category.label} <span>· {before ? `avant ${before.name}` : "meilleur endroit"}</span>
+            </span>
+            <button
+              type="button"
+              className={styles.remove}
+              aria-label={`Retirer ${category.label}`}
+              onClick={() => dispatch({ type: "removeService", id: r.id })}
+            >
+              <CrossIcon size={12} strokeWidth={2} />
+            </button>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
@@ -192,15 +223,18 @@ export function ReadyPanel({
   plan,
   route,
   arrival,
+  services,
   now,
   dispatch,
 }: {
   plan: TripPlan;
   route: Route;
   arrival: TripState["arrival"];
+  services: TripState["services"];
   now: Date;
   dispatch: Dispatch<TripAction>;
 }) {
+  const skipped = services.filter((r) => route.skipped.includes(r.id));
   const totalS = sum(route.legs.map((l) => l.durationS));
   const savedMin = Math.round(route.savedS / 60);
   return (
@@ -223,6 +257,11 @@ export function ReadyPanel({
         </div>
       </div>
       <RouteList plan={plan} route={route} now={now} />
+      {skipped.map((r) => (
+        <p key={r.id} className={styles.notice} role="status">
+          {serviceCategory(r.category)?.none} près du trajet : arrêt non ajouté.
+        </p>
+      ))}
       <button type="button" className={styles.primary} onClick={() => dispatch({ type: "start" })}>
         Démarrer la tournée
       </button>
@@ -248,6 +287,7 @@ export function NavigationPanel({
   dispatch: Dispatch<TripAction>;
 }) {
   const legs = route.legs;
+  const visitCount = plan.visits.filter((v) => !v.category).length;
   if (progress >= legs.length) {
     return (
       <>
@@ -255,7 +295,7 @@ export function NavigationPanel({
           Tournée terminée
         </h2>
         <p className={styles.text}>
-          {plan.visits.length} visite{plan.visits.length > 1 ? "s" : ""} ·{" "}
+          {visitCount} visite{visitCount > 1 ? "s" : ""} ·{" "}
           {formatDuration(sum(legs.map((l) => l.durationS)))} de route ·{" "}
           {formatKm(sum(legs.map((l) => l.distanceM)))}
         </p>
@@ -274,6 +314,9 @@ export function NavigationPanel({
   const target = isReturn
     ? { name: "Retour au départ", city: plan.startStop?.name ?? "Ma position", lngLat: plan.start }
     : plan.visits[progress];
+  const category = !isReturn && plan.visits[progress].category ? serviceCategory(plan.visits[progress].category!) : null;
+  // Les adresses sont numérotées ; un service porte son icône.
+  const number = plan.visits.slice(0, progress + 1).filter((v) => !v.category).length;
   return (
     <>
       <div className={styles.target}>
@@ -283,13 +326,13 @@ export function NavigationPanel({
           style={{ "--leg-color": legColor(progress) } as Vars}
           aria-hidden="true"
         >
-          {isReturn ? "" : progress + 1}
+          {isReturn ? "" : category ? <ServiceIcon svg={category.icon} size={18} /> : number}
         </span>
         <div className={styles.targetText}>
           <h2 id="trip-title" className={styles.targetName}>
             {target.name}
           </h2>
-          <p className={styles.targetCity}>{target.city}</p>
+          <p className={styles.targetCity}>{category ? [category.label, target.city].filter(Boolean).join(" · ") : target.city}</p>
         </div>
       </div>
       <div className={styles.legSummary}>
@@ -341,6 +384,6 @@ export function panelMeta(trip: TripState, plan: TripPlan | null, now: Date | nu
     const remainingS = sum(route.legs.slice(progress).map((l) => l.durationS));
     return `Étape ${progress + 1} sur ${route.legs.length} · fin ${formatClock(later(now, remainingS))}`;
   }
-  const count = plan?.visits.length ?? stops.length;
+  const count = plan ? plan.visits.filter((v) => !v.category).length : stops.length;
   return count ? `Tournée · ${count} arrêt${count > 1 ? "s" : ""}` : "Nouvelle tournée";
 }

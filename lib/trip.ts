@@ -1,9 +1,21 @@
 import { isLngLat, type LngLat } from "./geo";
 import type { AddressResult } from "./geocoding";
 import type { Leg } from "./ors";
+import { isServiceCategoryId, type ServiceCategoryId } from "./services-config";
 
 /** Une étape de la tournée : une adresse géocodée (coordonnées gardées, pas de re-géocodage). */
 export type Stop = AddressResult;
+
+/** Service demandé (carburant, boulangerie…), placé au calcul du trajet. */
+export type ServiceRequest = {
+  id: string;
+  category: ServiceCategoryId;
+  /** « Avant l'adresse X » : id de l'adresse ; null = meilleur endroit sur le trajet. */
+  beforeId: string | null;
+};
+
+/** Destination du trajet : une adresse de la liste, ou le lieu trouvé pour un service. */
+export type Visit = Stop & { category?: ServiceCategoryId };
 
 /** Départ : ma position, ou la première adresse de la liste. */
 export type Departure = "position" | "first";
@@ -14,15 +26,20 @@ export type Arrival = "free" | "start" | "last";
 export type Route = {
   /** Point de départ au moment du calcul (la position bouge ensuite). */
   start: LngLat;
+  /** Destinations dans l'ordre : les adresses, avec les services insérés. */
+  visits: Visit[];
   /** Un tronçon par destination : chaque visite, puis le retour au départ s'il est demandé. */
   legs: Leg[];
   /** Temps gagné par rapport à l'ordre saisi (s). */
   savedS: number;
+  /** Services demandés qui n'ont pas pu être placés (aucun lieu trouvé). */
+  skipped: string[];
 };
 
 export type TripState = {
-  /** Étapes dans l'ordre de visite. */
+  /** Adresses dans l'ordre de visite. */
   stops: Stop[];
+  services: ServiceRequest[];
   /** Dernière adresse ajoutée, mise en avant tant que la liste n'a pas été retouchée. */
   lastAddedId: string | null;
   departure: Departure;
@@ -40,7 +57,10 @@ export type TripAction =
   | { type: "move"; from: number; to: number }
   | { type: "setDeparture"; value: "position" | string }
   | { type: "setArrival"; value: "free" | "start" | string }
-  | { type: "optimized"; order: string[]; route: Route }
+  | { type: "addService"; request: ServiceRequest }
+  | { type: "removeService"; id: string }
+  | { type: "optimized"; startId: string | null; route: Route }
+  | { type: "serviceAdded"; request: ServiceRequest; route: Route }
   | { type: "edit" }
   | { type: "start" }
   | { type: "arrive" }
@@ -57,6 +77,7 @@ export const MIN_STOPS = 2;
 
 export const initialTrip: TripState = {
   stops: [],
+  services: [],
   lastAddedId: null,
   departure: "position",
   arrival: "free",
@@ -91,7 +112,11 @@ export function tripReducer(state: TripState, action: TripAction): TripState {
       return changed(state, { stops: [...state.stops, action.stop], lastAddedId: action.stop.id });
     }
     case "remove":
-      return changed(state, { stops: state.stops.filter((s) => s.id !== action.id) });
+      return changed(state, {
+        stops: state.stops.filter((s) => s.id !== action.id),
+        // Un service prévu « avant » cette adresse revient au meilleur endroit.
+        services: state.services.map((r) => (r.beforeId === action.id ? { ...r, beforeId: null } : r)),
+      });
     case "move": {
       const { from, to } = action;
       const n = state.stops.length;
@@ -109,12 +134,20 @@ export function tripReducer(state: TripState, action: TripAction): TripState {
       return action.value === "free" || action.value === "start"
         ? changed(state, { arrival: action.value })
         : changed(state, { arrival: "last", stops: moveTo(state.stops, action.value, -1) });
+    case "addService":
+      return changed(state, { services: [...state.services, action.request] });
+    case "removeService":
+      return changed(state, { services: state.services.filter((r) => r.id !== action.id) });
     case "optimized": {
+      // Les adresses prennent l'ordre calculé (le départ éventuel en tête) ; les services restent dans le trajet.
       const byId = new Map(state.stops.map((s) => [s.id, s]));
-      const stops = action.order.flatMap((id) => byId.get(id) ?? []);
+      const order = [...(action.startId ? [action.startId] : []), ...action.route.visits.filter((v) => !v.category).map((v) => v.id)];
+      const stops = order.flatMap((id) => byId.get(id) ?? []);
       if (stops.length !== state.stops.length) return state;
       return { ...state, stops, route: action.route, lastAddedId: null, progress: null };
     }
+    case "serviceAdded":
+      return { ...state, services: [...state.services, action.request], route: action.route, progress: null };
     case "edit":
       return changed(state, {});
     case "start":
@@ -135,7 +168,7 @@ export type TripPlan = {
   start: LngLat;
   /** Étape de départ quand on part d'une adresse (sinon on part de ma position). */
   startStop: Stop | null;
-  visits: Stop[];
+  visits: Visit[];
   returnToStart: boolean;
 };
 
@@ -146,6 +179,11 @@ export function tripPlan(state: Pick<TripState, "stops" | "departure" | "arrival
   const start = fromPosition ? position : startStop?.lngLat;
   if (!start || state.stops.length < MIN_STOPS) return null;
   return { start, startStop, visits, returnToStart: state.arrival === "start" };
+}
+
+/** Le trajet tel que calculé : mêmes départ et retour, destinations services compris. */
+export function routePlan(plan: TripPlan, route: Route): TripPlan & { visits: Visit[] } {
+  return { ...plan, start: route.start, visits: route.visits };
 }
 
 /** Coordonnées à relier, dans l'ordre (le départ est répété à la fin pour un retour). */
@@ -183,6 +221,9 @@ function isStop(s: unknown): s is Stop {
   );
 }
 
+const isVisit = (v: unknown): v is Visit =>
+  isStop(v) && ((v as Visit).category === undefined || isServiceCategoryId((v as Visit).category));
+
 function isRoute(r: unknown): r is Route {
   const o = r as Record<string, unknown> | null;
   return (
@@ -190,6 +231,10 @@ function isRoute(r: unknown): r is Route {
     o !== null &&
     isLngLat(o.start) &&
     isNumber(o.savedS) &&
+    Array.isArray(o.visits) &&
+    o.visits.every(isVisit) &&
+    Array.isArray(o.skipped) &&
+    o.skipped.every((id) => typeof id === "string") &&
     Array.isArray(o.legs) &&
     o.legs.every(
       (l: Record<string, unknown>) =>
@@ -212,13 +257,26 @@ export function parseStoredTrip(raw: string | null): Partial<TripState> {
   if (typeof data !== "object" || data === null) return {};
   const o = data as Record<string, unknown>;
   const stops = Array.isArray(o.stops) ? o.stops.filter(isStop).slice(0, MAX_STOPS) : [];
-  const state: Partial<TripState> = { stops };
+  const ids = new Set(stops.map((s) => s.id));
+  const services = Array.isArray(o.services)
+    ? o.services
+        .filter(
+          (r): r is ServiceRequest =>
+            typeof r?.id === "string" && isServiceCategoryId(r.category) && (r.beforeId === null || typeof r.beforeId === "string"),
+        )
+        .map((r) => ({ id: r.id, category: r.category, beforeId: r.beforeId && ids.has(r.beforeId) ? r.beforeId : null }))
+    : [];
+  const state: Partial<TripState> = { stops, services };
   if (o.departure === "position" || o.departure === "first") state.departure = o.departure;
   if (o.arrival === "free" || o.arrival === "start" || o.arrival === "last") state.arrival = o.arrival;
-  // Le trajet n'est repris que s'il correspond encore aux étapes (une par visite, plus le retour).
+  // Le trajet n'est repris que s'il correspond encore aux étapes (un tronçon par destination, plus le retour).
   if (isRoute(o.route)) {
-    const plan = tripPlan({ stops, departure: state.departure ?? "first", arrival: state.arrival ?? "free" }, o.route.start);
-    if (plan && planCoordinates(plan).length - 1 === o.route.legs.length) {
+    const route = o.route;
+    const plan = tripPlan({ stops, departure: state.departure ?? "first", arrival: state.arrival ?? "free" }, route.start);
+    const sameStops =
+      plan !== null &&
+      route.visits.filter((v) => !v.category).map((v) => v.id).join("|") === plan.visits.map((s) => s.id).join("|");
+    if (plan && sameStops && route.visits.length + (plan.returnToStart ? 1 : 0) === route.legs.length) {
       state.route = o.route;
       if (isNumber(o.progress) && o.progress >= 0 && o.progress <= o.route.legs.length) {
         state.progress = Math.floor(o.progress);
@@ -229,8 +287,8 @@ export function parseStoredTrip(raw: string | null): Partial<TripState> {
 }
 
 /** Ce qui est sauvegardé : tout sauf la mise en avant passagère. */
-export function storedTrip({ stops, departure, arrival, route, progress }: TripState): string {
-  return JSON.stringify({ stops, departure, arrival, route, progress });
+export function storedTrip({ stops, services, departure, arrival, route, progress }: TripState): string {
+  return JSON.stringify({ stops, services, departure, arrival, route, progress });
 }
 
 // --- Lignes à dessiner sur la carte ---

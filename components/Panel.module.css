@@ -504,3 +504,104 @@
   margin: 0;
   font-size: 16px;
 }
+
+/* --- Arrêt de service (écran 8) --- */
+.sheetTitle {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.sheetText {
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+.placement {
+  margin-top: 14px;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+/* Tuile : 2px, coins droits ; icône en haut, libellé en bas ; active en noir. */
+.tile {
+  height: 74px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  border: 2px solid var(--ink);
+  background: var(--white);
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tile:active,
+.tile[data-active] {
+  background: var(--ink);
+  color: var(--white);
+}
+
+.tile:disabled:not([data-active]) {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.sheetStatus {
+  min-height: 1em;
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Services demandés (édition) */
+.requests {
+  list-style: none;
+  margin-top: 10px;
+  border-top: 2px solid var(--ink);
+  padding-top: 4px;
+}
+
+.request {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 36px;
+  align-items: center;
+  height: 40px;
+}
+
+.request svg {
+  margin-left: 10px;
+}
+
+.requestText {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14.5px;
+  font-weight: 600;
+}
+
+.requestText span {
+  font-weight: 400;
+  color: var(--text-3);
+}
+
+.request .remove {
+  margin: 0;
+}
