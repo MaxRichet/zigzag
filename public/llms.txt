@@ -1,0 +1,18 @@
+# Zigzag
+
+> Zigzag est une application web gratuite, utilisable sur téléphone sans compte, qui calcule l'ordre de visite le plus rapide pour une tournée de plusieurs adresses en France, affiche le trajet (durée, distance, heure de fin) et insère des arrêts de service (carburant, recharge, pause, parking…) au meilleur endroit du trajet.
+
+## À qui s'adresse Zigzag
+- Commerciaux terrain qui déposent des échantillons ou visitent plusieurs clients dans la journée
+- Prospection en porte-à-porte
+- Tout professionnel qui enchaîne plusieurs adresses et veut l'ordre le plus rapide
+
+## Fonctionnement
+1. Saisir les adresses de la tournée (autocomplétion des adresses françaises).
+2. Zigzag calcule l'ordre de visite le plus rapide à partir de la position de départ.
+3. Ajouter si besoin un arrêt de service : Zigzag choisit le lieu le mieux placé et l'insère là où il ajoute le moins de détour.
+
+## Pages clés
+- [Application](/): calcul de tournée sur carte
+- [Cas d'usage](/cas-usage): exemples d'utilisation
+- [Questions fréquentes](/faq)

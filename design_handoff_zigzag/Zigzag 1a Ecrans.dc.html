@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&amp;display=swap"><style>html,body{margin:0;height:100%;overflow:hidden;background:#E9E8E4;font-family:'Switzer',system-ui,sans-serif}a{color:#111}a:hover{color:#000}input::placeholder{color:#4A4A4A;opacity:1}@keyframes zzLoad{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}@keyframes zzDash{to{stroke-dashoffset:-40}}@keyframes zzBlink{50%{opacity:0}}</style></helmet>
+<div style="width:100vw;height:100vh;display:flex;flex-direction:column;align-items:center;box-sizing:border-box;padding:22px 24px 0">
+<div style="width:100%;display:flex;align-items:baseline;gap:14px;margin-bottom:14px">
+<span style="font:700 22px/1 'Switzer',sans-serif;letter-spacing:-0.03em;color:#111">zigzag</span>
+<span style="font:500 14px/1 'Switzer',sans-serif;color:#4A4A4A">Direction 1a « Ligne de métro » · écran carte, du démarrage à la tournée prête</span>
+</div>
+<div style="width:{{ boxW }}px;height:{{ boxH }}px;position:relative">
+<div style="position:absolute;left:0;top:0;width:3504px;transform:scale({{ scale }});transform-origin:0 0;display:flex;gap:32px">
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:10px;height:28px"><span style="width:26px;height:26px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font:700 14px/1 'Switzer',sans-serif">1</span><span style="font:600 17px/1 'Switzer',sans-serif;color:#111">Ouverture, aucune adresse</span></div>
+<div style="width:390px;height:844px;border:10px solid #111;border-radius:54px;position:relative;overflow:hidden;background:#EEEFEC;color:#111">
+<div style="position:absolute;inset:0">{{ map1 }}</div>
+<div style="position:absolute;left:46px;top:327px;transform:translate(-50%,-50%);width:24px;height:24px;background:#111;border:3px solid #fff;box-shadow:0 0 0 2px #111;display:flex;align-items:center;justify-content:center"><div style="width:8px;height:8px;background:#fff"></div></div>
+<div style="position:absolute;top:0;left:0;right:0;height:50px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 32px 6px;box-sizing:border-box;font:600 15px/1 'Switzer',sans-serif"><span>9:41</span><div style="width:24px;height:11px;border:1.5px solid #111;border-radius:3px;padding:1.5px;box-sizing:border-box"><div style="width:70%;height:100%;background:#111;border-radius:1px"></div></div></div>
+<div style="position:absolute;top:58px;left:14px;right:14px;display:flex;gap:8px">
+<div style="flex:1;min-width:0;height:52px;background:#fff;border:2px solid #111;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:0 14px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.4"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L21 21"></path></svg><span style="font:500 16px 'Switzer',sans-serif;color:#4A4A4A">Ajouter une adresse</span></div>
+<div style="width:52px;height:52px;flex:none;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" stroke="#fff" stroke-width="3"><path d="M12 3v18M3 12h18"></path></svg></div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:2px solid #111;padding:16px 20px 34px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span style="font:700 17px/1 'Switzer',sans-serif;letter-spacing:-0.03em">zigzag</span><span style="font:600 12px/1 'Switzer',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#4A4A4A">Nouvelle tournée</span></div>
+<div style="font:700 36px/1 'Switzer',sans-serif;letter-spacing:-0.035em">Aucune adresse</div>
+<p style="margin:8px 0 16px;font:400 15px/1.4 'Switzer',sans-serif;color:#4A4A4A;text-wrap:pretty">Ajoutez les adresses de vos visites du jour. Zigzag trouve l'ordre le plus rapide.</p>
+<div style="border-top:2px solid #111;padding-top:6px">
+<div style="display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;height:42px">
+<div style="position:relative;height:100%"><div style="position:absolute;left:21px;top:50%;bottom:0;border-left:3px dashed #9A9A96"></div><div style="position:absolute;left:12px;top:50%;margin-top:-10px;width:20px;height:20px;background:#111;box-sizing:border-box;border:3px solid #fff;box-shadow:0 0 0 2px #111"></div></div>
+<span style="font:600 15px/1.2 'Switzer',sans-serif">Départ · Ma position</span><span style="font:500 13px/1 'Switzer',sans-serif;color:#4A4A4A">9:30</span>
+</div>
+<div style="display:grid;grid-template-columns:44px minmax(0,1fr);align-items:center;height:46px">
+<div style="position:relative;height:100%"><div style="position:absolute;left:21px;top:0;height:50%;border-left:3px dashed #9A9A96"></div><div style="position:absolute;left:8px;top:50%;margin-top:-14px;width:28px;height:28px;border-radius:50%;border:3px dashed #9A9A96;box-sizing:border-box;background:#fff"></div></div>
+<span style="font:500 15px/1.2 'Switzer',sans-serif;color:#4A4A4A">Première étape</span>
+</div>
+</div>
+<div style="margin-top:14px;width:100%;height:54px;background:#E4E4E1;color:#5E5E5B;border-radius:4px;font:600 17px/1 'Switzer',sans-serif;display:flex;align-items:center;justify-content:center">Optimiser l'ordre</div>
+<div style="margin-top:8px;text-align:center;font:500 13px/1 'Switzer',sans-serif;color:#4A4A4A">2 adresses minimum</div>
+</div>
+<div style="position:absolute;left:50%;bottom:8px;width:134px;height:5px;margin-left:-67px;border-radius:3px;background:#111"></div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:10px;height:28px"><span style="width:26px;height:26px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font:700 14px/1 'Switzer',sans-serif">2</span><span style="font:600 17px/1 'Switzer',sans-serif;color:#111">Recherche, clavier ouvert</span></div>
+<div style="width:390px;height:844px;border:10px solid #111;border-radius:54px;position:relative;overflow:hidden;background:#EEEFEC;color:#111">
+<div style="position:absolute;inset:0">{{ map1 }}</div>
+<div style="position:absolute;inset:0;background:rgba(238,239,236,.55)"></div>
+<div style="position:absolute;top:0;left:0;right:0;height:50px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 32px 6px;box-sizing:border-box;font:600 15px/1 'Switzer',sans-serif"><span>9:41</span><div style="width:24px;height:11px;border:1.5px solid #111;border-radius:3px;padding:1.5px;box-sizing:border-box"><div style="width:70%;height:100%;background:#111;border-radius:1px"></div></div></div>
+<div style="position:absolute;top:58px;left:14px;right:14px;display:flex;gap:12px;align-items:center">
+<div style="flex:1;min-width:0;height:52px;background:#fff;border:3px solid #111;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:0 12px 0 13px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.4"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L21 21"></path></svg>
+<span style="flex:1;min-width:0;display:flex;align-items:center;font:500 16px 'Switzer',sans-serif;white-space:nowrap">12 bd des Bel<span style="display:inline-block;width:2px;height:20px;background:#111;margin-left:1px;animation:zzBlink 1s steps(1) infinite"></span></span>
+<div style="width:20px;height:20px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 10 10" stroke="#fff" stroke-width="1.8"><path d="M2 2l6 6M8 2l-6 6"></path></svg></div>
+</div>
+<span style="font:600 15px/1 'Switzer',sans-serif">Annuler</span>
+</div>
+<div style="position:absolute;top:118px;left:14px;right:14px;background:#fff;border:2px solid #111">
+<sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="4">
+<div style="display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:12px;align-items:center;height:62px;padding:0 14px;border-top:{{ s.border }};background:{{ s.bg }}">
+<svg width="20" height="22" viewBox="0 0 20 22" fill="none" stroke="#111" stroke-width="2.2"><path d="M10 20s7-6.2 7-11.5A7 7 0 0 0 3 8.5C3 13.8 10 20 10 20z"></path><circle cx="10" cy="8.5" r="2.4"></circle></svg>
+<div style="min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font:400 15px/1.2 'Switzer',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><b style="font-weight:700">{{ s.match }}</b>{{ s.rest }}</span><span style="font:400 13px/1.2 'Switzer',sans-serif;color:#4A4A4A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.sub }}</span></div>
+<span style="font:600 13px/1 'Switzer',sans-serif;font-variant-numeric:tabular-nums">{{ s.dist }}</span>
+</div>
+</sc-for>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;height:336px;background:#D1D3D9;box-sizing:border-box;padding:8px 3px 0">
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;gap:6px;padding:0 0"><sc-for list="{{ kRow1 }}" as="k" hint-placeholder-count="10"><div style="flex:1;height:44px;border-radius:5px;background:#fff;box-shadow:0 1px 0 #898A8D;display:flex;align-items:center;justify-content:center;font:400 23px/1 -apple-system,'SF Pro Text',system-ui,sans-serif;color:#000">{{ k }}</div></sc-for></div>
+<div style="display:flex;gap:6px"><sc-for list="{{ kRow2 }}" as="k" hint-placeholder-count="10"><div style="flex:1;height:44px;border-radius:5px;background:#fff;box-shadow:0 1px 0 #898A8D;display:flex;align-items:center;justify-content:center;font:400 23px/1 -apple-system,'SF Pro Text',system-ui,sans-serif;color:#000">{{ k }}</div></sc-for></div>
+<div style="display:flex;gap:6px">
+<div style="width:44px;flex:none;height:44px;border-radius:5px;background:#ABB0BA;box-shadow:0 1px 0 #898A8D;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3l9 9h-5v8H8v-8H3z"></path></svg></div>
+<div style="flex:1;display:flex;gap:6px;padding:0 6px"><sc-for list="{{ kRow3 }}" as="k" hint-placeholder-count="7"><div style="flex:1;height:44px;border-radius:5px;background:#fff;box-shadow:0 1px 0 #898A8D;display:flex;align-items:center;justify-content:center;font:400 23px/1 -apple-system,'SF Pro Text',system-ui,sans-serif;color:#000">{{ k }}</div></sc-for></div>
+<div style="width:44px;flex:none;height:44px;border-radius:5px;background:#ABB0BA;box-shadow:0 1px 0 #898A8D;display:flex;align-items:center;justify-content:center"><svg width="24" height="18" viewBox="0 0 26 18" fill="none" stroke="#000" stroke-width="1.7" stroke-linejoin="round"><path d="M8 1h16v16H8L1 9z"></path><path d="M12 5.5l7 7M19 5.5l-7 7"></path></svg></div>
+</div>
+<div style="display:flex;gap:6px">
+<div style="width:44px;height:44px;border-radius:5px;background:#ABB0BA;box-shadow:0 1px 0 #898A8D;display:flex;align-items:center;justify-content:center;font:400 16px/1 -apple-system,system-ui,sans-serif;color:#000">123</div>
+<div style="width:44px;height:44px;border-radius:5px;background:#ABB0BA;box-shadow:0 1px 0 #898A8D;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6"><circle cx="12" cy="12" r="9"></circle><circle cx="9" cy="10" r="1" fill="#000"></circle><circle cx="15" cy="10" r="1" fill="#000"></circle><path d="M8 14.5c2 2.4 6 2.4 8 0"></path></svg></div>
+<div style="flex:1;height:44px;border-radius:5px;background:#fff;box-shadow:0 1px 0 #898A8D;display:flex;align-items:center;justify-content:center;font:400 16px/1 -apple-system,system-ui,sans-serif;color:#000">espace</div>
+<div style="width:96px;height:44px;border-radius:5px;background:#0A84FF;box-shadow:0 1px 0 #898A8D;display:flex;align-items:center;justify-content:center;font:400 16px/1 -apple-system,system-ui,sans-serif;color:#fff">rechercher</div>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;padding:14px 22px 0">
+<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4B4E55" stroke-width="1.6"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"></path></svg>
+<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4B4E55" stroke-width="1.7"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"></path></svg>
+</div>
+<div style="position:absolute;left:50%;bottom:8px;width:134px;height:5px;margin-left:-67px;border-radius:3px;background:#111"></div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:10px;height:28px"><span style="width:26px;height:26px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font:700 14px/1 'Switzer',sans-serif">3</span><span style="font:600 17px/1 'Switzer',sans-serif;color:#111">Adresse saisie</span></div>
+<div style="width:390px;height:844px;border:10px solid #111;border-radius:54px;position:relative;overflow:hidden;background:#EEEFEC;color:#111">
+<div style="position:absolute;inset:0">{{ map1 }}</div>
+<div style="position:absolute;left:46px;top:327px;transform:translate(-50%,-50%);width:24px;height:24px;background:#111;border:3px solid #fff;box-shadow:0 0 0 2px #111;display:flex;align-items:center;justify-content:center"><div style="width:8px;height:8px;background:#fff"></div></div>
+<sc-for list="{{ pending }}" as="m" hint-placeholder-count="4"><div style="position:absolute;left:{{ m.x }}px;top:{{ m.y }}px;transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;background:#fff;border:3px solid #111;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:700 14px/1 'Switzer',sans-serif">{{ m.num }}</div></sc-for>
+<div style="position:absolute;left:318px;top:139px;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;background:#111;border:3px solid #fff;box-shadow:0 0 0 2px #111"></div>
+<div style="position:absolute;right:58px;top:139px;transform:translateY(-50%);display:flex;align-items:center">
+<div style="background:#111;color:#fff;font:600 13px/1 'Switzer',sans-serif;padding:8px 10px;white-space:nowrap">Pharmacie du Parc</div>
+<div style="width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-left:8px solid #111"></div>
+</div>
+<div style="position:absolute;top:0;left:0;right:0;height:50px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 32px 6px;box-sizing:border-box;font:600 15px/1 'Switzer',sans-serif"><span>9:41</span><div style="width:24px;height:11px;border:1.5px solid #111;border-radius:3px;padding:1.5px;box-sizing:border-box"><div style="width:70%;height:100%;background:#111;border-radius:1px"></div></div></div>
+<div style="position:absolute;top:58px;left:14px;right:14px;display:flex;gap:8px">
+<div style="flex:1;min-width:0;height:52px;background:#fff;border:2px solid #111;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:0 14px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.4"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L21 21"></path></svg><span style="font:500 16px 'Switzer',sans-serif;color:#4A4A4A">Ajouter une adresse</span></div>
+<div style="width:52px;height:52px;flex:none;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" stroke="#fff" stroke-width="3"><path d="M12 3v18M3 12h18"></path></svg></div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:2px solid #111;padding:14px 20px 34px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font:700 17px/1 'Switzer',sans-serif;letter-spacing:-0.03em">zigzag</span><span style="font:600 12px/1 'Switzer',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#4A4A4A">Tournée · 4 arrêts</span></div>
+<sc-for list="{{ pendingRows }}" as="r" hint-placeholder-count="4">
+<div style="display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;height:40px">
+<div style="position:relative;height:100%"><div style="position:absolute;left:21px;top:0;bottom:0;border-left:3px dashed #9A9A96"></div><div style="position:absolute;left:10px;top:50%;margin-top:-12px;width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid #111;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:700 12px/1 'Switzer',sans-serif">{{ r.num }}</div></div>
+<span style="font:600 14.5px/1.2 'Switzer',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</span>
+<span style="font:400 12.5px/1 'Switzer',sans-serif;color:#555;padding-left:8px">{{ r.city }}</span>
+</div>
+</sc-for>
+<div style="margin-top:10px;border-top:2px solid #111;padding-top:14px">
+<div style="font:600 12px/1 'Switzer',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#4A4A4A">Nouvelle étape · 5</div>
+<div style="margin-top:8px;font:700 24px/1.1 'Switzer',sans-serif;letter-spacing:-0.025em">Pharmacie du Parc</div>
+<div style="margin-top:4px;font:400 15px/1.3 'Switzer',sans-serif;color:#4A4A4A">12 bd des Belges, 69006 Lyon</div>
+<div style="display:flex;gap:10px;margin-top:16px">
+<div style="flex:1;height:54px;background:#111;color:#fff;border-radius:4px;display:flex;align-items:center;justify-content:center;font:600 15.5px/1 'Switzer',sans-serif">Valider la tournée</div>
+</div>
+</div>
+</div>
+<div style="position:absolute;left:50%;bottom:8px;width:134px;height:5px;margin-left:-67px;border-radius:3px;background:#111"></div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:10px;height:28px"><span style="width:26px;height:26px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font:700 14px/1 'Switzer',sans-serif">4</span><span style="font:600 17px/1 'Switzer',sans-serif;color:#111">Calcul du trajet</span></div>
+<div style="width:390px;height:844px;border:10px solid #111;border-radius:54px;position:relative;overflow:hidden;background:#EEEFEC;color:#111">
+<div style="position:absolute;inset:0">{{ map4 }}</div>
+<div style="position:absolute;left:46px;top:327px;transform:translate(-50%,-50%);width:24px;height:24px;background:#111;border:3px solid #fff;box-shadow:0 0 0 2px #111;display:flex;align-items:center;justify-content:center"><div style="width:8px;height:8px;background:#fff"></div></div>
+<sc-for list="{{ all5 }}" as="m" hint-placeholder-count="5"><div style="position:absolute;left:{{ m.x }}px;top:{{ m.y }}px;transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;background:#fff;border:3px solid #111;box-sizing:border-box;display:flex;align-items:center;justify-content:center"><div style="width:8px;height:8px;border-radius:50%;background:#111"></div></div></sc-for>
+<div style="position:absolute;top:0;left:0;right:0;height:50px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 32px 6px;box-sizing:border-box;font:600 15px/1 'Switzer',sans-serif"><span>9:41</span><div style="width:24px;height:11px;border:1.5px solid #111;border-radius:3px;padding:1.5px;box-sizing:border-box"><div style="width:70%;height:100%;background:#111;border-radius:1px"></div></div></div>
+<div style="position:absolute;top:58px;left:14px;right:14px;display:flex;gap:8px">
+<div style="flex:1;min-width:0;height:52px;background:#fff;border:2px solid #111;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:0 14px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.4"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L21 21"></path></svg><span style="font:500 16px 'Switzer',sans-serif;color:#4A4A4A">Ajouter une adresse</span></div>
+<div style="width:52px;height:52px;flex:none;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" stroke="#fff" stroke-width="3"><path d="M12 3v18M3 12h18"></path></svg></div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:2px solid #111;padding:14px 20px 34px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font:700 17px/1 'Switzer',sans-serif;letter-spacing:-0.03em">zigzag</span><span style="font:600 12px/1 'Switzer',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#4A4A4A">Tournée · 5 arrêts</span></div>
+<div style="font:700 30px/1.05 'Switzer',sans-serif;letter-spacing:-0.035em">Recherche du meilleur ordre</div>
+<div style="margin-top:14px;height:8px;background:#E4E4E1;position:relative;overflow:hidden">{{ loader }}</div>
+<div style="margin-top:8px;display:flex;justify-content:space-between;font:500 13px/1 'Switzer',sans-serif;color:#4A4A4A"><span>120 ordres possibles comparés</span><span>Trafic en temps réel</span></div>
+<div style="margin-top:12px;border-top:2px solid #111;padding-top:4px">
+<sc-for list="{{ calcRows }}" as="r" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;height:42px">
+<div style="position:relative;height:100%"><div style="position:absolute;left:21px;top:0;bottom:0;border-left:3px dashed #9A9A96"></div><div style="position:absolute;left:10px;top:50%;margin-top:-12px;width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid #111;box-sizing:border-box;display:flex;align-items:center;justify-content:center"><div style="width:6px;height:6px;border-radius:50%;background:#111"></div></div></div>
+<span style="font:600 14.5px/1.2 'Switzer',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</span>
+<div style="height:10px;background:#E4E4E1;border-radius:2px"></div>
+</div>
+</sc-for>
+</div>
+<div style="margin-top:12px;width:100%;height:54px;border:2px solid #111;box-sizing:border-box;border-radius:4px;display:flex;align-items:center;justify-content:center;font:600 17px/1 'Switzer',sans-serif">Annuler</div>
+</div>
+<div style="position:absolute;left:50%;bottom:8px;width:134px;height:5px;margin-left:-67px;border-radius:3px;background:#111"></div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:10px;height:28px"><span style="width:26px;height:26px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font:700 14px/1 'Switzer',sans-serif">5</span><span style="font:600 17px/1 'Switzer',sans-serif;color:#111">Tournée prête</span></div>
+<div style="width:390px;height:844px;border:10px solid #111;border-radius:54px;position:relative;overflow:hidden;background:#EEEFEC;color:#111">
+<div style="position:absolute;inset:0">{{ map5 }}</div>
+<div style="position:absolute;left:46px;top:327px;transform:translate(-50%,-50%);width:24px;height:24px;background:#111;border:3px solid #fff;box-shadow:0 0 0 2px #111;display:flex;align-items:center;justify-content:center"><div style="width:8px;height:8px;background:#fff"></div></div>
+<sc-for list="{{ finalMarkers }}" as="m" hint-placeholder-count="5"><div style="position:absolute;left:{{ m.x }}px;top:{{ m.y }}px;transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;background:{{ m.color }};color:{{ m.fg }};border:3px solid #fff;box-shadow:0 0 0 2px #111;display:flex;align-items:center;justify-content:center;font:700 15px/1 'Switzer',sans-serif">{{ m.num }}</div></sc-for>
+<div style="position:absolute;top:0;left:0;right:0;height:50px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 32px 6px;box-sizing:border-box;font:600 15px/1 'Switzer',sans-serif"><span>9:41</span><div style="width:24px;height:11px;border:1.5px solid #111;border-radius:3px;padding:1.5px;box-sizing:border-box"><div style="width:70%;height:100%;background:#111;border-radius:1px"></div></div></div>
+<div style="position:absolute;top:58px;left:14px;right:14px;display:flex;gap:8px">
+<div style="flex:1;min-width:0;height:52px;background:#fff;border:2px solid #111;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:0 14px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.4"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L21 21"></path></svg><span style="font:500 16px 'Switzer',sans-serif;color:#4A4A4A">Ajouter une adresse</span></div>
+<div style="width:52px;height:52px;flex:none;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" stroke="#fff" stroke-width="3"><path d="M12 3v18M3 12h18"></path></svg></div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:2px solid #111;padding:14px 20px 34px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font:700 17px/1 'Switzer',sans-serif;letter-spacing:-0.03em">zigzag</span><span style="font:600 12px/1 'Switzer',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#4A4A4A">Tournée · 5 arrêts</span></div>
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:2px solid #111">
+<div style="font:700 52px/0.95 'Switzer',sans-serif;letter-spacing:-0.04em;font-variant-numeric:tabular-nums">{{ fTime }}</div>
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;padding-bottom:3px">
+<span style="font:700 12px/1 'Switzer',sans-serif;padding:4px 6px;background:#111;color:#fff">{{ fSaved }}</span>
+<span style="font:600 20px/1 'Switzer',sans-serif;font-variant-numeric:tabular-nums">{{ fDist }}</span>
+<span style="font:500 13px/1 'Switzer',sans-serif;color:#4A4A4A">Retour libre · fin {{ fEta }}</span>
+</div>
+</div>
+<div style="margin-top:4px">
+<div style="display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;height:38px">
+<div style="position:relative;height:100%"><div style="position:absolute;left:19px;top:50%;bottom:0;width:6px;background:{{ fFirst }}"></div><div style="position:absolute;left:12px;top:50%;margin-top:-10px;width:20px;height:20px;background:#111;box-sizing:border-box;border:3px solid #fff;box-shadow:0 0 0 2px #111"></div></div>
+<span style="font:600 14px/1.2 'Switzer',sans-serif">Départ · Ma position</span><span style="font:500 13px/1 'Switzer',sans-serif;color:#4A4A4A">9:30</span>
+</div>
+<sc-for list="{{ finalRows }}" as="r" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;height:46px">
+<div style="position:relative;height:100%"><div style="position:absolute;left:19px;top:0;height:50%;width:6px;background:{{ r.color }}"></div><div style="position:absolute;left:19px;top:50%;bottom:0;width:6px;background:{{ r.next }}"></div><div style="position:absolute;left:8px;top:50%;margin-top:-14px;width:28px;height:28px;border-radius:50%;background:#fff;border:4px solid {{ r.color }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:700 13px/1 'Switzer',sans-serif">{{ r.num }}</div></div>
+<div style="min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font:600 15px/1.2 'Switzer',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</span><span style="font:400 12.5px/1.2 'Switzer',sans-serif;color:#555;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.addr }}</span></div>
+<span style="font:600 13px/1 'Switzer',sans-serif;font-variant-numeric:tabular-nums;padding-left:8px">+{{ r.leg }}</span>
+</div>
+</sc-for>
+</div>
+<div style="margin-top:12px;width:100%;height:54px;background:#111;color:#fff;border-radius:4px;font:600 17px/1 'Switzer',sans-serif;display:flex;align-items:center;justify-content:center">Démarrer la tournée</div>
+</div>
+<div style="position:absolute;left:50%;bottom:8px;width:134px;height:5px;margin-left:-67px;border-radius:3px;background:#111"></div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:10px;height:28px"><span style="width:26px;height:26px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font:700 14px/1 'Switzer',sans-serif">6</span><span style="font:600 17px/1 'Switzer',sans-serif;color:#111">En route, guidage</span></div>
+<div style="width:390px;height:844px;border:10px solid #111;border-radius:54px;position:relative;overflow:hidden;background:#EEEFEC;color:#111">
+<div style="position:absolute;inset:0">{{ map6 }}</div>
+<div style="position:absolute;top:0;left:0;right:0;background:#111;color:#fff;padding:0 0 16px">
+<div style="height:50px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 32px 6px;box-sizing:border-box;font:600 15px/1 'Switzer',sans-serif"><span>9:41</span><div style="width:24px;height:11px;border:1.5px solid #fff;border-radius:3px;padding:1.5px;box-sizing:border-box"><div style="width:70%;height:100%;background:#fff;border-radius:1px"></div></div></div>
+<div style="display:flex;align-items:center;gap:16px;padding:12px 20px 0">
+<div style="width:64px;height:64px;flex:none;background:#fff;display:flex;align-items:center;justify-content:center"><svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#111" stroke-width="5" stroke-linejoin="miter" style="transform:{{ nTurnFlip }}"><path d="M12 36V18h18"></path><path d="M24 10l8 8-8 8" stroke-linecap="square"></path></svg></div>
+<div style="min-width:0;display:flex;flex-direction:column;gap:6px"><span style="font:700 34px/1 'Switzer',sans-serif;letter-spacing:-0.035em;font-variant-numeric:tabular-nums">{{ nTurnDist }}</span><span style="font:500 16px/1.2 'Switzer',sans-serif;color:#E4E4E1">{{ nTurnText }}, quai Victor Augagneur</span></div>
+</div>
+<div style="display:flex;align-items:center;gap:10px;margin:14px 20px 0;padding-top:12px;border-top:1px solid #444;font:500 14px/1 'Switzer',sans-serif;color:#E4E4E1"><span>Puis</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M7 21V5M7 5l-4 4M7 5l4 4"></path></svg><span>tout droit sur 1,2 km</span></div>
+</div>
+<div style="position:absolute;left:14px;top:478px;height:52px;padding:0 14px;background:#fff;border:2px solid #111;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:3px"><span style="font:700 20px/1 'Switzer',sans-serif;font-variant-numeric:tabular-nums">42</span><span style="font:600 10px/1 'Switzer',sans-serif;letter-spacing:.08em;color:#4A4A4A">KM/H</span></div>
+<div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:2px solid #111;padding:14px 20px 34px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font:600 12px/1 'Switzer',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#4A4A4A">Étape 1 sur 5</span><span style="font:600 12px/1 'Switzer',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#4A4A4A">Fin {{ fEta }}</span></div>
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:36px;height:36px;flex:none;border-radius:50%;background:#fff;border:5px solid {{ fFirst }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:700 15px/1 'Switzer',sans-serif">1</div>
+<div style="min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font:700 22px/1.1 'Switzer',sans-serif;letter-spacing:-0.025em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ nName }}</span><span style="font:400 14px/1.2 'Switzer',sans-serif;color:#4A4A4A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ nAddr }}</span></div>
+</div>
+<div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:14px;padding-bottom:14px;border-bottom:2px solid #111">
+<span style="font:700 46px/0.95 'Switzer',sans-serif;letter-spacing:-0.04em;font-variant-numeric:tabular-nums">{{ nMin }}</span>
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;padding-bottom:3px"><span style="font:600 18px/1 'Switzer',sans-serif;font-variant-numeric:tabular-nums">{{ nKm }}</span><span style="font:500 13px/1 'Switzer',sans-serif;color:#4A4A4A">Arrivée {{ nEta }}</span></div>
+</div>
+<div style="display:flex;align-items:center;margin:16px 4px 0">
+<sc-for list="{{ navLine }}" as="n" hint-placeholder-count="5"><div style="flex:1;display:flex;align-items:center"><div style="width:20px;height:20px;flex:none;border-radius:50%;background:{{ n.fill }};border:4px solid {{ n.color }};box-sizing:border-box"></div><div style="flex:1;height:6px;background:{{ n.next }}"></div></div></sc-for>
+<div style="width:16px;height:16px;flex:none;background:#111"></div>
+</div>
+<div style="display:flex;gap:10px;margin-top:16px">
+<div style="width:110px;height:54px;border:2px solid #111;box-sizing:border-box;border-radius:4px;display:flex;align-items:center;justify-content:center;font:600 16px/1 'Switzer',sans-serif">Arrêter</div>
+<div style="flex:1;height:54px;background:#111;color:#fff;border-radius:4px;display:flex;align-items:center;justify-content:center;font:600 16px/1 'Switzer',sans-serif">Je suis arrivé</div>
+</div>
+</div>
+<div style="position:absolute;left:50%;bottom:8px;width:134px;height:5px;margin-left:-67px;border-radius:3px;background:#111"></div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:10px;height:28px"><span style="width:26px;height:26px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font:700 14px/1 'Switzer',sans-serif">7</span><span style="font:600 17px/1 'Switzer',sans-serif;color:#111">Carte libre (zoom), recentrer</span></div>
+<div style="width:390px;height:844px;border:10px solid #111;border-radius:54px;position:relative;overflow:hidden;background:#EEEFEC;color:#111">
+<div style="position:absolute;inset:0">{{ map7 }}</div>
+<sc-for list="{{ finalMarkers }}" as="m" hint-placeholder-count="5"><div style="position:absolute;left:{{ m.x }}px;top:{{ m.y }}px;transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;background:{{ m.color }};color:{{ m.fg }};border:3px solid #fff;box-shadow:0 0 0 2px #111;display:flex;align-items:center;justify-content:center;font:700 15px/1 'Switzer',sans-serif">{{ m.num }}</div></sc-for>
+<div style="position:absolute;left:{{ meX }}px;top:{{ meY }}px;width:36px;height:36px;margin:-18px 0 0 -18px;border-radius:50%;background:#fff;border:3px solid #111;box-sizing:border-box;display:flex;align-items:center;justify-content:center;transform:rotate({{ meRot }}deg)"><svg width="18" height="18" viewBox="-11 -15 22 28"><path d="M0 -15 L11 12 L0 6 L-11 12 Z" fill="#111"></path></svg></div>
+<div style="position:absolute;top:0;left:0;right:0;background:#111;color:#fff;padding:0 0 12px">
+<div style="height:50px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 32px 6px;box-sizing:border-box;font:600 15px/1 'Switzer',sans-serif"><span>9:41</span><div style="width:24px;height:11px;border:1.5px solid #fff;border-radius:3px;padding:1.5px;box-sizing:border-box"><div style="width:70%;height:100%;background:#fff;border-radius:1px"></div></div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:8px 20px 0">
+<div style="width:40px;height:40px;flex:none;background:#fff;display:flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 40 40" fill="none" stroke="#111" stroke-width="5" style="transform:{{ nTurnFlip }}"><path d="M12 36V18h18"></path><path d="M24 10l8 8-8 8" stroke-linecap="square"></path></svg></div>
+<span style="font:700 22px/1 'Switzer',sans-serif;letter-spacing:-0.03em">{{ nTurnDist }}</span>
+<span style="min-width:0;font:500 14px/1.2 'Switzer',sans-serif;color:#E4E4E1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ nTurnText }}</span>
+</div>
+</div>
+<div style="position:absolute;right:14px;top:512px;display:flex;flex-direction:column;align-items:center;gap:12px">
+<div style="display:flex;flex-direction:column;background:#fff;border:2px solid #111">
+<div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-bottom:2px solid #111"><svg width="18" height="18" viewBox="0 0 24 24" stroke="#111" stroke-width="3"><path d="M12 3v18M3 12h18"></path></svg></div>
+<div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" stroke="#111" stroke-width="3"><path d="M3 12h18"></path></svg></div>
+</div>
+<div aria-label="Recentrer sur ma position" style="width:52px;height:52px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l7 19-7-4-7 4z"></path></svg></div>
+</div>
+<div style="position:absolute;left:14px;top:648px;display:flex;flex-direction:column;gap:4px"><div style="width:64px;height:6px;border:2px solid #111;border-top:0;box-sizing:border-box"></div><span style="font:600 11px/1 'Switzer',sans-serif">500 m</span></div>
+<div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:2px solid #111;padding:14px 20px 34px">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:32px;height:32px;flex:none;border-radius:50%;background:#fff;border:5px solid {{ fFirst }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:700 14px/1 'Switzer',sans-serif">1</div>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font:700 18px/1.1 'Switzer',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ nName }}</span><span style="font:500 13px/1.2 'Switzer',sans-serif;color:#4A4A4A">{{ nMin }} · {{ nKm }} · arrivée {{ nEta }}</span></div>
+</div>
+<div style="margin-top:14px;display:flex;justify-content:space-between;align-items:baseline;padding:12px 0;border-top:2px solid #111;border-bottom:2px solid #111"><span style="font:600 12px/1 'Switzer',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#4A4A4A">Tournée entière</span><span style="font:700 20px/1 'Switzer',sans-serif;font-variant-numeric:tabular-nums">{{ fTime }} · {{ fDist }}</span></div>
+</div>
+<div style="position:absolute;left:50%;bottom:8px;width:134px;height:5px;margin-left:-67px;border-radius:3px;background:#fff"></div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:10px;height:28px"><span style="width:26px;height:26px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font:700 14px/1 'Switzer',sans-serif">8</span><span style="font:600 17px/1 'Switzer',sans-serif;color:#111">Bouton + : arrêts de service</span></div>
+<div style="width:390px;height:844px;border:10px solid #111;border-radius:54px;position:relative;overflow:hidden;background:#EEEFEC;color:#111">
+<div style="position:absolute;inset:0">{{ map5 }}</div>
+<div style="position:absolute;inset:0;background:rgba(238,239,236,.5)"></div>
+<sc-for list="{{ finalMarkers }}" as="m" hint-placeholder-count="5"><div style="position:absolute;left:{{ m.x }}px;top:{{ m.y }}px;transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;background:{{ m.color }};color:{{ m.fg }};border:3px solid #fff;box-shadow:0 0 0 2px #111;display:flex;align-items:center;justify-content:center;font:700 15px/1 'Switzer',sans-serif">{{ m.num }}</div></sc-for>
+<div style="position:absolute;top:0;left:0;right:0;height:50px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 32px 6px;box-sizing:border-box;font:600 15px/1 'Switzer',sans-serif"><span>9:41</span><div style="width:24px;height:11px;border:1.5px solid #111;border-radius:3px;padding:1.5px;box-sizing:border-box"><div style="width:70%;height:100%;background:#111;border-radius:1px"></div></div></div>
+<div style="position:absolute;top:58px;left:14px;right:14px;display:flex;gap:8px">
+<div style="flex:1;min-width:0;height:52px;background:#fff;border:2px solid #111;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:0 14px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.4"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L21 21"></path></svg><span style="font:500 16px 'Switzer',sans-serif;color:#4A4A4A">Ajouter une adresse</span></div>
+<div style="width:52px;height:52px;flex:none;border-radius:50%;background:#fff;border:3px solid #111;box-sizing:border-box;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" stroke="#111" stroke-width="3.2"><path d="M5 5l14 14M19 5L5 19"></path></svg></div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:2px solid #111;padding:16px 20px 34px">
+<div style="font:600 12px/1 'Switzer',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#4A4A4A">Arrêt de service</div>
+<div style="margin-top:8px;font:700 26px/1.1 'Switzer',sans-serif;letter-spacing:-0.03em">Ajouter un arrêt sur le trajet</div>
+<p style="margin:8px 0 16px;font:400 14px/1.4 'Switzer',sans-serif;color:#4A4A4A;text-wrap:pretty">Zigzag choisit le lieu le mieux placé et l'insère au meilleur moment de la tournée.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<sc-for list="{{ services }}" as="v" hint-placeholder-count="6">
+<div style="height:82px;border:2px solid #111;box-sizing:border-box;padding:12px;display:flex;flex-direction:column;justify-content:space-between;background:{{ v.bg }};color:{{ v.fg }}">
+<div style="display:flex;justify-content:space-between;align-items:flex-start">{{ v.icon }}<span style="font:600 12px/1 'Switzer',sans-serif;font-variant-numeric:tabular-nums">{{ v.detour }}</span></div>
+<span style="font:600 15px/1.1 'Switzer',sans-serif">{{ v.label }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="position:absolute;left:50%;bottom:8px;width:134px;height:5px;margin-left:-67px;border-radius:3px;background:#111"></div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const POOL = [
+  { id: 'a', name: 'Pharmacie du Parc', addr: '12 bd des Belges, Lyon 6e', city: 'Lyon 6e', x: 318, y: 139 },
+  { id: 'b', name: 'Boulangerie Martin', addr: '8 rue Mercière, Lyon 2e', city: 'Lyon 2e', x: 96, y: 178 },
+  { id: 'c', name: 'Cabinet Dr Roux', addr: '54 cours Gambetta, Lyon 7e', city: 'Lyon 7e', x: 330, y: 310 },
+  { id: 'd', name: 'Optique Bellecour', addr: '3 place Bellecour, Lyon 2e', city: 'Lyon 2e', x: 176, y: 258 },
+  { id: 'e', name: 'Garage Central', addr: '27 rue Garibaldi, Lyon 3e', city: 'Lyon 3e', x: 232, y: 130 },
+];
+const BY = Object.fromEntries(POOL.map(p => [p.id, p]));
+const START = { x: 46, y: 327 };
+const ENTRY = ['b', 'c', 'd', 'e', 'a'];
+const KM = 0.015;
+const PAL = ['#0072B2', '#E69F00', '#009E73', '#CC79A7', '#D55E00'];
+const T = { bg: '#EEEFEC', minor: '#F7F7F5', major: '#FFFFFF', water: '#D8DFE3', park: '#E1E5DD', label: '#8A8F8C' };
+const lum = h => { const c = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255).map(v => v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
+const fg = h => (lum(h) > 0.3 ? '#111111' : '#FFFFFF');
+function leg(p, q) {
+  const dx = q.x - p.x, dy = q.y - p.y, ax = Math.abs(dx), ay = Math.abs(dy), d = Math.min(ax, ay);
+  const m = ax > ay ? { x: p.x + Math.sign(dx) * (ax - d), y: p.y } : { x: p.x, y: p.y + Math.sign(dy) * (ay - d) };
+  return { m, d: `M${p.x} ${p.y} L${m.x} ${m.y} L${q.x} ${q.y}`, len: Math.max(ax, ay) - d + d * Math.SQRT2 };
+}
+const legsOf = o => { let pr = START; return o.map(id => { const l = leg(pr, BY[id]); pr = BY[id]; return l; }); };
+const minOf = l => Math.max(1, Math.round(l * KM / 24 * 60));
+const tot = o => legsOf(o).reduce((s, l) => s + minOf(l.len), 0);
+function best(o) {
+  let b = o, bv = Infinity;
+  const p = (a, c) => { if (!a.length) { const v = legsOf(c).reduce((s, l) => s + l.len, 0); if (v < bv) { bv = v; b = c; } return; } a.forEach((x, i) => p(a.filter((_, j) => j !== i), c.concat(x))); };
+  p(o, []); return b;
+}
+const fmt = m => (m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')}`);
+const clock = m => { const t = 570 + m; return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
+const MINOR = (() => { const a = []; for (let y = 30; y < 880; y += 50) a.push(`M-20 ${y} L410 ${y - 34}`); for (let x = -40; x < 420; x += 46) a.push(`M${x} -20 L${x + 44} 860`); return a; })();
+const MAJOR = ['M-20 252 L410 214', 'M138 -20 L206 860', 'M-20 520 L410 612', 'M306 -20 L262 860', 'M-20 118 L410 170', 'M-20 430 L410 452', 'M40 -20 L92 860'];
+const BOARD_W = 3504, BOARD_H = 884;
+
+class Component extends DCLogic {
+  state = { scale: 0.5 };
+  componentDidMount() {
+    this.fit = () => this.setState({ scale: Math.min((window.innerWidth - 48) / BOARD_W, (window.innerHeight - 80) / BOARD_H) });
+    this.fit(); window.addEventListener('resize', this.fit);
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.fit); }
+
+  map(route, mode) {
+    const h = React.createElement;
+    const kids = [
+      h('rect', { key: 'bg', width: 390, height: 844, fill: T.bg }),
+      h('rect', { key: 'p1', x: 196, y: 158, width: 74, height: 40, fill: T.park, transform: 'rotate(-5 233 178)' }),
+      h('rect', { key: 'p2', x: 40, y: 560, width: 110, height: 80, fill: T.park }),
+      h('g', { key: 'mi', stroke: T.minor, strokeWidth: 3, fill: 'none' }, MINOR.map((d, i) => h('path', { key: i, d }))),
+      h('path', { key: 'w', d: 'M-20 436 C 60 396 108 296 190 284 S 300 262 410 212', stroke: T.water, strokeWidth: 30, fill: 'none' }),
+      h('g', { key: 'ma', stroke: T.major, strokeWidth: 8, fill: 'none' }, MAJOR.map((d, i) => h('path', { key: i, d }))),
+      h('text', { key: 'l1', x: 22, y: 246, fill: T.label, style: { font: '600 10px system-ui', letterSpacing: '.14em' } }, 'PRESQU’ÎLE'),
+      h('text', { key: 'l2', x: 292, y: 190, fill: T.label, style: { font: '600 10px system-ui', letterSpacing: '.14em' } }, 'PART-DIEU'),
+    ];
+    if (route) {
+      const legs = legsOf(route);
+      kids.push(h('g', { key: 'r' }, legs.map((l, i) => mode === 'calc'
+        ? h('path', { key: i, d: l.d, fill: 'none', stroke: '#111', strokeWidth: 3, strokeDasharray: '6 4', opacity: 0.55, style: { animation: 'zzDash 1.2s linear infinite' } })
+        : h('g', { key: i }, [
+          h('path', { key: 'c', d: l.d, fill: 'none', stroke: '#fff', strokeWidth: 12, strokeLinejoin: 'miter' }),
+          h('path', { key: 's', d: l.d, fill: 'none', stroke: PAL[i], strokeWidth: 7, strokeLinejoin: 'miter' }),
+        ]))));
+    }
+    return h('svg', { width: 390, height: 844, viewBox: '0 0 390 844', style: { display: 'block' } }, kids);
+  }
+
+  services() {
+    const h = React.createElement;
+    const ic = (d, c) => h('svg', { width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: c, strokeWidth: 2.2, strokeLinejoin: 'round', strokeLinecap: 'round' }, d.map((x, i) => h('path', { key: i, d: x })));
+    const list = [
+      ['Carburant', '+4 min', ['M4 21V4h9v17', 'M3 21h11', 'M6.5 8h4', 'M13 9h3l2 2v7a1.5 1.5 0 0 0 3 0v-9l-3-3']],
+      ['Recharge', '+6 min', ['M13 2L5 13h6l-1 9 8-11h-6z']],
+      ['Courses', '+7 min', ['M3 4h2l2.5 11h10L20 7H6.2', 'M9 20h.01', 'M17 20h.01']],
+      ['Pause déjeuner', '12:00–13:30', ['M7 3v8', 'M5 3v5a2 2 0 0 0 4 0V3', 'M7 11v10', 'M17 21V3c-2 1-3 3.5-3 7h3']],
+      ['Café', '+3 min', ['M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z', 'M16 11h2a2 2 0 0 1 0 4h-2', 'M8 3v3', 'M12 3v3']],
+      ['Parking', 'près des arrêts', ['M5 3h14v18H5z', 'M10 17V7h3a3 3 0 0 1 0 6h-3']],
+    ];
+    return list.map(([label, detour, d], i) => ({ label, detour, icon: ic(d, i === 0 ? '#fff' : '#111'), bg: i === 0 ? '#111' : '#fff', fg: i === 0 ? '#fff' : '#111' }));
+  }
+
+  navInfo(opt) {
+    const l = legsOf(opt)[0], q = BY[opt[0]];
+    let a = l.m, b = q;
+    if (Math.hypot(a.x - START.x, a.y - START.y) < 1) { a = q; b = null; }
+    const v1 = { x: a.x - START.x, y: a.y - START.y };
+    const phi = Math.atan2(v1.y, v1.x) * 180 / Math.PI;
+    let right = true;
+    if (b) { const v2 = { x: b.x - a.x, y: b.y - a.y }; right = v1.x * v2.y - v1.y * v2.x > 0; }
+    const dist = Math.max(50, Math.round(Math.hypot(v1.x, v1.y) * KM * 1000 / 50) * 50);
+    return { phi, right, dist: dist >= 1000 ? (dist / 1000).toFixed(1).replace('.', ',') + ' km' : dist + ' m', at: { x: START.x + v1.x * 0.35, y: START.y + v1.y * 0.35 } };
+  }
+
+  navMap(opt) {
+    const h = React.createElement, legs = legsOf(opt), U = { x: 195, y: 430 }, Z = 1.8;
+    const first = BY[opt[0]], nv = this.navInfo(opt);
+    const ang = nv.phi + 90;
+    const base = this.map(null).props.children;
+    const g = h('g', { key: 'z', transform: `translate(${U.x} ${U.y}) rotate(${-ang}) scale(${Z}) translate(${-START.x} ${-START.y})` }, [
+      ...base,
+      ...legs.slice(1).map((l, i) => h('path', { key: 'o' + i, d: l.d, fill: 'none', stroke: '#111', strokeWidth: 2.4, opacity: 0.3, strokeLinejoin: 'miter' })),
+      h('path', { key: 'c', d: legs[0].d, fill: 'none', stroke: '#fff', strokeWidth: 8, strokeLinejoin: 'miter' }),
+      h('path', { key: 's', d: legs[0].d, fill: 'none', stroke: PAL[0], strokeWidth: 5, strokeLinejoin: 'miter' }),
+      ...opt.slice(1).map((id, i) => h('g', { key: 'm' + id, transform: `translate(${BY[id].x} ${BY[id].y}) rotate(${ang})` }, [h('circle', { key: 'a', r: 6.5, fill: '#fff', stroke: '#111', strokeWidth: 1.5 }), h('text', { key: 'b', textAnchor: 'middle', dy: 3, style: { font: '700 8px Switzer,sans-serif' }, fill: '#111' }, String(i + 2))])),
+      h('g', { key: 'f', transform: `translate(${first.x} ${first.y}) rotate(${ang})` }, [h('circle', { key: 'a', r: 9, fill: '#fff', stroke: PAL[0], strokeWidth: 3.5 }), h('text', { key: 'b', textAnchor: 'middle', dy: 3.5, style: { font: '700 10px Switzer,sans-serif' }, fill: '#111' }, '1')]),
+    ]);
+    const me = h('g', { key: 'me', transform: `translate(${U.x} ${U.y})` }, [
+      h('circle', { key: 'h', r: 38, fill: '#111', opacity: 0.08 }),
+      h('circle', { key: 'c', r: 24, fill: '#fff', stroke: '#111', strokeWidth: 3 }),
+      h('path', { key: 'a', d: 'M0 -15 L11 12 L0 6 L-11 12 Z', fill: '#111' }),
+    ]);
+    return h('svg', { width: 390, height: 844, viewBox: '0 0 390 844', style: { display: 'block' } }, [h('rect', { key: 'bg', width: 390, height: 844, fill: T.bg }), g, me]);
+  }
+
+  renderVals() {
+    const s = this.state.scale;
+    const opt = best(ENTRY);
+    const legs = legsOf(opt), mins = legs.map(l => minOf(l.len)), total = mins.reduce((a, b) => a + b, 0);
+    const km = legs.reduce((a, l) => a + l.len, 0) * KM;
+    const sug = [
+      { match: '12 Boulevard des Bel', rest: 'ges', sub: 'Lyon 6e', dist: '2,4 km' },
+      { match: 'Pharmacie du Parc', rest: '', sub: '12 bd des Belges, Lyon 6e', dist: '2,4 km' },
+      { match: '12 Rue des Bel', rest: 'les-Feuilles', sub: 'Villeurbanne', dist: '5,8 km' },
+      { match: '12 Boulevard des Bel', rest: 'ges', sub: 'Caluire-et-Cuire', dist: '7,1 km' },
+    ].map((x, i) => ({ ...x, border: i ? '1px solid #E4E4E1' : '0', bg: i === 1 ? '#F3F3F1' : '#fff' }));
+    return {
+      scale: s, boxW: Math.round(BOARD_W * s), boxH: Math.round(BOARD_H * s),
+      map1: this.map(null), map4: this.map(opt, 'calc'), map5: this.map(opt),
+      suggestions: sug,
+      kRow1: 'azertyuiop'.split(''), kRow2: 'qsdfghjklm'.split(''), kRow3: ['w', 'x', 'c', 'v', 'b', 'n', '’'],
+      pending: ENTRY.slice(0, 4).map((id, i) => ({ x: BY[id].x, y: BY[id].y, num: i + 1 })),
+      pendingRows: ENTRY.slice(0, 4).map((id, i) => ({ num: i + 1, name: BY[id].name, city: BY[id].city })),
+      all5: ENTRY.map(id => ({ x: BY[id].x, y: BY[id].y })),
+      calcRows: ENTRY.map(id => ({ name: BY[id].name })),
+      loader: React.createElement('div', { style: { position: 'absolute', top: 0, bottom: 0, width: '40%', background: '#111', animation: 'zzLoad 1.4s ease-in-out infinite' } }),
+      finalMarkers: opt.map((id, i) => ({ x: BY[id].x, y: BY[id].y, num: i + 1, color: PAL[i], fg: fg(PAL[i]) })),
+      finalRows: opt.map((id, i) => ({ num: i + 1, name: BY[id].name, addr: BY[id].addr, leg: `${mins[i]} min`, color: PAL[i], next: i < 4 ? PAL[i + 1] : 'transparent' })),
+      fFirst: PAL[0], fTime: fmt(total), fDist: `${km.toFixed(1).replace('.', ',')} km`, fEta: clock(total),
+      services: this.services(),
+      map6: this.navMap(opt), map7: this.map(opt),
+      nTurnDist: this.navInfo(opt).dist,
+      nTurnText: this.navInfo(opt).right ? 'Tournez à droite' : 'Tournez à gauche',
+      nTurnFlip: this.navInfo(opt).right ? 'none' : 'scaleX(-1)',
+      meX: Math.round(this.navInfo(opt).at.x), meY: Math.round(this.navInfo(opt).at.y), meRot: Math.round(this.navInfo(opt).phi + 90),
+      nName: BY[opt[0]].name, nAddr: BY[opt[0]].addr, nMin: fmt(mins[0]), nKm: `${(legs[0].len * KM).toFixed(1).replace('.', ',')} km`, nEta: clock(mins[0]),
+      navLine: opt.map((id, i) => ({ color: PAL[i], fill: i === 0 ? PAL[0] : '#fff', next: i === 0 ? PAL[0] : '#D6D6D2' })),
+      fSaved: `−${Math.max(0, tot(ENTRY) - total)} min`,
+    };
+  }
+}
+</script>
+</body>
+</html>
