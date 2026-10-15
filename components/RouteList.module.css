@@ -1,0 +1,172 @@
+.list {
+  list-style: none;
+  max-height: 222px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin-top: 4px;
+}
+
+.row,
+.start {
+  position: relative;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.row {
+  height: 46px;
+}
+
+.start {
+  height: 38px;
+}
+
+/* Segments verticaux de 6px : moitié haute = tronçon d'arrivée, moitié basse = tronçon suivant. */
+.row::before,
+.row::after,
+.start::after {
+  content: "";
+  position: absolute;
+  left: 19px;
+  width: 6px;
+}
+
+.row::before {
+  top: 0;
+  height: 50%;
+  background: var(--top, transparent);
+}
+
+.row::after,
+.start::after {
+  top: 50%;
+  bottom: 0;
+  background: var(--bottom, transparent);
+}
+
+.start[data-end]::after {
+  top: 0;
+  bottom: 50%;
+  background: var(--top);
+}
+
+.square {
+  position: relative;
+  z-index: 1;
+  width: 20px;
+  height: 20px;
+  margin-left: 12px;
+  background: var(--ink);
+  border: 3px solid var(--white);
+  box-shadow: 0 0 0 2px var(--ink);
+}
+
+.dot {
+  position: relative;
+  z-index: 1;
+  width: 28px;
+  height: 28px;
+  margin-left: 8px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--white);
+  border: 4px solid var(--color);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.texts {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.name,
+.city {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.name {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.start .name {
+  font-size: 14px;
+}
+
+.city {
+  font-size: 12.5px;
+  line-height: 1.2;
+  color: var(--text-3);
+}
+
+.meta {
+  padding-left: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.start .meta {
+  font-weight: 500;
+  color: var(--text-2);
+}
+
+/* Calcul en cours : trait en pointillés, pastilles blanches avec un point, durées en squelette. */
+.computing {
+  border-top: 2px solid var(--ink);
+  margin-top: 12px;
+  padding-top: 4px;
+}
+
+.computing .row {
+  height: 42px;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+}
+
+.computing .row::before {
+  height: auto;
+  bottom: 0;
+  left: 21px;
+  width: 0;
+  border-left: 3px dashed var(--dashed);
+}
+
+.computing .row::after {
+  display: none;
+}
+
+.computing .dot {
+  width: 24px;
+  height: 24px;
+  margin-left: 10px;
+  border: 3px solid var(--ink);
+}
+
+.computing .dot::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.computing .name {
+  font-size: 14.5px;
+}
+
+.skeleton {
+  height: 10px;
+  border-radius: 2px;
+  background: var(--neutral);
+}

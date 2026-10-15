@@ -3,6 +3,17 @@ export type LngLat = [number, number];
 
 const EARTH_RADIUS_KM = 6371;
 
+/** Vrai pour un couple [longitude, latitude] valide. */
+export function isLngLat(p: unknown): p is LngLat {
+  return (
+    Array.isArray(p) &&
+    p.length === 2 &&
+    p.every((n) => typeof n === "number" && Number.isFinite(n)) &&
+    Math.abs(p[0]) <= 180 &&
+    Math.abs(p[1]) <= 90
+  );
+}
+
 /** Distance à vol d'oiseau, en kilomètres. */
 export function distanceKm([lng1, lat1]: LngLat, [lng2, lat2]: LngLat): number {
   const rad = Math.PI / 180;

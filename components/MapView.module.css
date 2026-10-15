@@ -87,3 +87,12 @@
   border-block: 7px solid transparent;
   border-left: 8px solid var(--ink);
 }
+
+/* Après calcul : pastille pleine à la couleur du tronçon, bordure blanche et anneau noir. */
+.stop.colored {
+  background: var(--leg-color);
+  color: var(--leg-text);
+  border-color: var(--white);
+  box-shadow: 0 0 0 2px var(--ink);
+  font-size: 15px;
+}

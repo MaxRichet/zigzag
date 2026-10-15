@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useReducer } from "react";
-import { initialTrip, parseStoredStops, tripReducer } from "@/lib/trip";
+import { initialTrip, parseStoredTrip, storedTrip, tripReducer } from "@/lib/trip";
 
 const STORAGE_KEY = "zigzag:trip";
 
@@ -12,7 +12,7 @@ export function useTrip() {
   // Lecture après le premier rendu : le serveur ne connaît pas le localStorage.
   useEffect(() => {
     try {
-      dispatch({ type: "hydrate", stops: parseStoredStops(localStorage.getItem(STORAGE_KEY)) });
+      dispatch({ type: "hydrate", state: parseStoredTrip(localStorage.getItem(STORAGE_KEY)) });
     } catch {
       // Stockage bloqué (navigation privée stricte) : la tournée ne sera simplement pas conservée.
     }
@@ -20,13 +20,13 @@ export function useTrip() {
 
   useEffect(() => {
     // Tant que la lecture n'a pas eu lieu, ne pas écraser la tournée sauvegardée.
-    if (trip.stops === initialTrip.stops) return;
+    if (trip === initialTrip) return;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(trip.stops));
+      localStorage.setItem(STORAGE_KEY, storedTrip(trip));
     } catch {
       // Idem : sans stockage, l'app fonctionne quand même.
     }
-  }, [trip.stops]);
+  }, [trip]);
 
   return { trip, dispatch };
 }

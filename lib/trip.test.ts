@@ -1,9 +1,27 @@
 import { describe, expect, it } from "vitest";
-import { initialTrip, MAX_STOPS, parseStoredStops, tripReducer, type Stop } from "./trip";
+import {
+  initialTrip,
+  legColor,
+  MAX_STOPS,
+  parseStoredTrip,
+  planCoordinates,
+  storedTrip,
+  textColorOn,
+  tripPlan,
+  tripReducer,
+  type Route,
+  type Stop,
+  type TripState,
+} from "./trip";
 
-const stop = (id: string): Stop => ({ id, name: `Adresse ${id}`, city: "69006 Lyon", lngLat: [4.85, 45.76] });
-const withStops = (...ids: string[]) => ({ stops: ids.map(stop), lastAddedId: null });
+const stop = (id: string, x = 0): Stop => ({ id, name: `Adresse ${id}`, city: "69006 Lyon", lngLat: [4.85 + x, 45.76] });
+const withStops = (...ids: string[]): TripState => ({ ...initialTrip, stops: ids.map((id, i) => stop(id, i)) });
 const ids = (state: { stops: Stop[] }) => state.stops.map((s) => s.id);
+const route = (legs: number): Route => ({
+  start: [4.8, 45.7],
+  savedS: 120,
+  legs: Array.from({ length: legs }, () => ({ durationS: 300, distanceM: 2000, coordinates: [[4.8, 45.7], [4.81, 45.71]] })),
+});
 
 describe("tripReducer", () => {
   it("ajoute une adresse en fin de tournée et la met en avant", () => {
@@ -37,30 +55,125 @@ describe("tripReducer", () => {
     expect(tripReducer(before, { type: "move", from: -1, to: 0 })).toBe(before);
   });
 
-  it("retoucher la liste retire la mise en avant", () => {
-    const added = tripReducer(withStops("a", "b"), { type: "add", stop: stop("c") });
-    expect(tripReducer(added, { type: "move", from: 0, to: 1 }).lastAddedId).toBeNull();
-    expect(tripReducer(added, { type: "remove", id: "a" }).lastAddedId).toBeNull();
+  it("partir d'une adresse la place en tête ; arriver à une adresse la place en dernier", () => {
+    const dep = tripReducer(withStops("a", "b", "c"), { type: "setDeparture", value: "c" });
+    expect([ids(dep), dep.departure]).toEqual([["c", "a", "b"], "first"]);
+    const arr = tripReducer(dep, { type: "setArrival", value: "a" });
+    expect([ids(arr), arr.arrival]).toEqual([["c", "b", "a"], "last"]);
+    expect(tripReducer(arr, { type: "setArrival", value: "start" }).arrival).toBe("start");
+    expect(tripReducer(arr, { type: "setDeparture", value: "position" }).departure).toBe("position");
   });
 
-  it("recharge une tournée sauvegardée sans mise en avant", () => {
-    const state = tripReducer(initialTrip, { type: "hydrate", stops: [stop("a")] });
-    expect(ids(state)).toEqual(["a"]);
-    expect(state.lastAddedId).toBeNull();
+  it("applique l'ordre optimisé et garde le trajet", () => {
+    const state = tripReducer(withStops("a", "b", "c"), { type: "optimized", order: ["c", "a", "b"], route: route(3) });
+    expect(ids(state)).toEqual(["c", "a", "b"]);
+    expect(state.route?.legs).toHaveLength(3);
+  });
+
+  it("ignore un ordre qui ne correspond pas aux étapes", () => {
+    const before = withStops("a", "b");
+    expect(tripReducer(before, { type: "optimized", order: ["a", "x"], route: route(2) })).toBe(before);
+  });
+
+  it("toute modification invalide le trajet et la progression", () => {
+    const ready = { ...withStops("a", "b", "c"), route: route(3), progress: 1 };
+    for (const action of [
+      { type: "add", stop: stop("d") },
+      { type: "remove", id: "a" },
+      { type: "move", from: 0, to: 1 },
+      { type: "setDeparture", value: "b" },
+      { type: "setArrival", value: "free" },
+      { type: "edit" },
+    ] as const) {
+      const next = tripReducer(ready, action);
+      expect([next.route, next.progress]).toEqual([null, null]);
+    }
+  });
+
+  it("démarre, avance d'étape en étape sans dépasser la fin, s'arrête", () => {
+    let state: TripState = { ...withStops("a", "b"), route: route(2) };
+    state = tripReducer(state, { type: "start" });
+    expect(state.progress).toBe(0);
+    state = tripReducer(tripReducer(tripReducer(state, { type: "arrive" }), { type: "arrive" }), { type: "arrive" });
+    expect(state.progress).toBe(2);
+    expect(tripReducer(state, { type: "stop" }).progress).toBeNull();
+  });
+
+  it("ne démarre pas sans trajet", () => {
+    const state = withStops("a", "b");
+    expect(tripReducer(state, { type: "start" })).toBe(state);
+  });
+
+  it("une nouvelle tournée vide tout sauf les préférences de départ et d'arrivée", () => {
+    const state = tripReducer({ ...withStops("a", "b"), arrival: "start", route: route(2) }, { type: "reset" });
+    expect([state.stops, state.route, state.arrival]).toEqual([[], null, "start"]);
   });
 });
 
-describe("parseStoredStops", () => {
-  it("relit des étapes valides", () => {
-    expect(parseStoredStops(JSON.stringify([stop("a")]))).toEqual([stop("a")]);
+describe("tripPlan", () => {
+  const position: [number, number] = [4.8, 45.7];
+
+  it("part de ma position et visite toutes les adresses", () => {
+    const plan = tripPlan(withStops("a", "b"), position);
+    expect(plan?.start).toEqual(position);
+    expect(plan?.visits.map((s) => s.id)).toEqual(["a", "b"]);
+    expect(planCoordinates(plan!)).toHaveLength(3);
+  });
+
+  it("part de la première adresse sans position, ou si on l'a choisi", () => {
+    expect(tripPlan(withStops("a", "b"), null)?.startStop?.id).toBe("a");
+    expect(tripPlan({ ...withStops("a", "b"), departure: "first" }, position)?.visits.map((s) => s.id)).toEqual(["b"]);
+  });
+
+  it("répète le départ à la fin pour un retour", () => {
+    const coords = planCoordinates(tripPlan({ ...withStops("a", "b"), arrival: "start" }, position)!);
+    expect(coords).toHaveLength(4);
+    expect(coords.at(-1)).toEqual(position);
+  });
+
+  it("demande au moins 2 adresses", () => {
+    expect(tripPlan(withStops("a"), position)).toBeNull();
+  });
+});
+
+describe("couleurs", () => {
+  it("parcourt la palette en boucle", () => {
+    expect([legColor(0), legColor(7)]).toEqual(["#0072B2", "#0072B2"]);
+  });
+
+  it("choisit un numéro lisible", () => {
+    expect(textColorOn("#E69F00")).toBe("#111111");
+    expect(textColorOn("#0072B2")).toBe("#FFFFFF");
+    expect(textColorOn("#111111")).toBe("#FFFFFF");
+  });
+});
+
+describe("parseStoredTrip", () => {
+  it("relit une tournée sauvegardée, trajet et progression compris", () => {
+    const state: TripState = { ...withStops("a", "b"), arrival: "start", route: route(3), progress: 1 };
+    expect(parseStoredTrip(storedTrip(state))).toEqual({
+      stops: state.stops,
+      departure: "position",
+      arrival: "start",
+      route: state.route,
+      progress: 1,
+    });
+  });
+
+  it("relit l'ancien format (liste d'étapes)", () => {
+    expect(parseStoredTrip(JSON.stringify([stop("a")]))).toEqual({ stops: [stop("a")] });
+  });
+
+  it("écarte un trajet qui ne correspond plus aux étapes", () => {
+    const state: TripState = { ...withStops("a", "b"), route: route(5), progress: 0 };
+    expect(parseStoredTrip(storedTrip(state)).route).toBeUndefined();
   });
 
   it("ignore un contenu absent, corrompu ou mal formé", () => {
-    expect(parseStoredStops(null)).toEqual([]);
-    expect(parseStoredStops("{oups")).toEqual([]);
-    expect(parseStoredStops(JSON.stringify({ a: 1 }))).toEqual([]);
-    expect(
-      parseStoredStops(JSON.stringify([stop("a"), { id: "b", name: "B", city: "", lngLat: [1] }, null])),
-    ).toEqual([stop("a")]);
+    expect(parseStoredTrip(null)).toEqual({});
+    expect(parseStoredTrip("{oups")).toEqual({});
+    expect(parseStoredTrip(JSON.stringify({ stops: [stop("a"), { id: "b", lngLat: [1] }, null], departure: "x" }))).toEqual({
+      stops: [stop("a")],
+    });
   });
 });

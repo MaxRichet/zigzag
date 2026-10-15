@@ -1,11 +1,18 @@
 "use client";
 
-import { LngLatBounds, Map as MapLibreMap, Marker, setWorkerUrl, type PaddingOptions } from "maplibre-gl";
+import {
+  LngLatBounds,
+  Map as MapLibreMap,
+  Marker,
+  setWorkerUrl,
+  type GeoJSONSource,
+  type PaddingOptions,
+} from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef } from "react";
 import type { LngLat } from "@/lib/geo";
 import { mapStyle } from "@/lib/map-style";
-import type { Stop } from "@/lib/trip";
+import { legColor, textColorOn, type LineFeature, type Stop } from "@/lib/trip";
 import styles from "./MapView.module.css";
 
 const FRANCE: [LngLat, LngLat] = [
@@ -18,28 +25,36 @@ const MAX_FIT_ZOOM = 15;
 const TOP_INSET = 100;
 const BOTTOM_EXTRA = 48;
 const SIDE_INSET = 40;
+const LINES = "route";
+/** Le tracé passe sous les noms de rues et de quartiers. */
+const LINES_BEFORE = "road-label";
 
 // MapLibre 6 cherche son worker à côté de son propre fichier, ce que le bundler ne copie pas :
 // on lui donne l'URL du worker émis comme asset.
 setWorkerUrl(new URL("maplibre-gl/dist/maplibre-gl-worker.mjs", import.meta.url).href);
 
 type Props = {
-  /** Position de départ (utilisateur), ou null si inconnue. */
+  /** Point de départ (carré noir) : ma position ou la première adresse, null si inconnu. */
   start: LngLat | null;
-  stops: Stop[];
+  /** Étapes à visiter, numérotées dans l'ordre. */
+  visits: Stop[];
   /** Étape mise en avant (dernière ajoutée), affichée avec son nom. */
   highlightId: string | null;
+  /** Étapes colorées selon leur tronçon (une fois le trajet calculé). */
+  colored: boolean;
+  lines: LineFeature[];
+  /** Tronçon sur lequel cadrer (tournée démarrée), sinon toute la tournée. */
+  focusLeg: number | null;
   /** Hauteur masquée par le panneau du bas, pour cadrer la carte dans la zone visible. */
   bottomInset: number;
 };
 
-export default function MapView({ start, stops, highlightId, bottomInset }: Props) {
+export default function MapView({ start, visits, highlightId, colored, lines, focusLeg, bottomInset }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const startMarkerRef = useRef<Marker | null>(null);
   const stopMarkersRef = useRef(new Map<string, Marker>());
-  const startRef = useRef(start);
-  const stopsRef = useRef(stops);
+  const latest = useRef({ start, visits, lines, focusLeg });
   const framedRef = useRef(false);
   const key = process.env.NEXT_PUBLIC_MAPTILER_KEY;
 
@@ -57,6 +72,48 @@ export default function MapView({ start, stops, highlightId, bottomInset }: Prop
     });
     map.touchZoomRotate.disableRotation();
     map.keyboard.disableRotation();
+    map.on("load", () => {
+      map.addSource(LINES, { type: "geojson", data: collection(latest.current.lines) });
+      const solid = ["!", ["get", "draft"]] as ["!", ["get", string]];
+      // Liseré blanc 12px sous un trait de 7px à la couleur du tronçon, angles vifs.
+      map.addLayer(
+        {
+          id: "route-casing",
+          type: "line",
+          source: LINES,
+          filter: solid,
+          layout: { "line-join": "miter", "line-cap": "butt" },
+          paint: { "line-color": "#FFFFFF", "line-width": 12, "line-opacity": ["get", "opacity"] },
+        },
+        LINES_BEFORE,
+      );
+      map.addLayer(
+        {
+          id: "route-line",
+          type: "line",
+          source: LINES,
+          filter: solid,
+          layout: { "line-join": "miter", "line-cap": "butt" },
+          paint: { "line-color": ["get", "color"], "line-width": 7, "line-opacity": ["get", "opacity"] },
+        },
+        LINES_BEFORE,
+      );
+      map.addLayer(
+        {
+          id: "route-draft",
+          type: "line",
+          source: LINES,
+          filter: ["get", "draft"],
+          paint: {
+            "line-color": ["get", "color"],
+            "line-width": 3,
+            "line-opacity": ["get", "opacity"],
+            "line-dasharray": [2, 1.33],
+          },
+        },
+        LINES_BEFORE,
+      );
+    });
     mapRef.current = map;
     const stopMarkers = stopMarkersRef.current;
     return () => {
@@ -69,18 +126,22 @@ export default function MapView({ start, stops, highlightId, bottomInset }: Prop
   }, [key]);
 
   useEffect(() => {
-    startRef.current = start;
-    stopsRef.current = stops;
+    latest.current = { start, visits, lines, focusLeg };
   });
 
-  // Départ : carré noir, déplacé à chaque nouvelle position.
+  // Départ : carré noir.
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !start) return;
+    if (!map) return;
+    if (!start) {
+      startMarkerRef.current?.remove();
+      startMarkerRef.current = null;
+      return;
+    }
     if (!startMarkerRef.current) {
       const el = document.createElement("div");
       el.className = styles.start;
-      el.setAttribute("aria-label", "Point de départ : ma position");
+      el.setAttribute("aria-label", "Point de départ");
       startMarkerRef.current = new Marker({ element: el }).setLngLat(start).addTo(map);
     } else {
       startMarkerRef.current.setLngLat(start);
@@ -92,37 +153,52 @@ export default function MapView({ start, stops, highlightId, bottomInset }: Prop
     const map = mapRef.current;
     if (!map) return;
     const markers = stopMarkersRef.current;
-    const ids = new Set(stops.map((s) => s.id));
+    const ids = new Set(visits.map((s) => s.id));
     for (const [id, marker] of markers) {
       if (!ids.has(id)) {
         marker.remove();
         markers.delete(id);
       }
     }
-    stops.forEach((stop, i) => {
+    visits.forEach((stop, i) => {
       let marker = markers.get(stop.id);
       if (!marker) {
         marker = new Marker({ element: document.createElement("div") }).setLngLat(stop.lngLat).addTo(map);
         markers.set(stop.id, marker);
+      } else {
+        marker.setLngLat(stop.lngLat);
       }
-      renderStopMarker(marker.getElement(), stop, i + 1, stop.id === highlightId);
+      renderStopMarker(marker.getElement(), stop, i + 1, stop.id === highlightId, colored ? legColor(i) : null);
     });
-  }, [stops, highlightId]);
+  }, [visits, highlightId, colored]);
+
+  // Tracé (ou trait provisoire pendant le calcul).
+  useEffect(() => {
+    const source = mapRef.current?.getSource<GeoJSONSource>(LINES);
+    // Avant le chargement du style, la source sera créée avec les dernières lignes (voir « load »).
+    source?.setData(collection(lines));
+  }, [lines]);
 
   // Cadrage : seulement quand l'ensemble des points change (pas à chaque mouvement de l'utilisateur
   // ni quand on réordonne), ou quand le panneau change de hauteur. Entre-temps, la carte est libre.
   const startKnown = start !== null;
-  const stopsKey = stops
+  const visitsKey = visits
     .map((s) => s.id)
     .sort()
     .join("|");
+  const hasLines = lines.length > 0 && !lines[0].properties.draft;
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-    const points = [
-      ...(startRef.current ? [startRef.current] : []),
-      ...stopsRef.current.map((s) => s.lngLat),
-    ];
+    const current = latest.current;
+    const focused = current.focusLeg !== null ? current.lines[current.focusLeg] : undefined;
+    const points = focused
+      ? focused.geometry.coordinates
+      : [
+          ...(current.start ? [current.start] : []),
+          ...current.visits.map((s) => s.lngLat),
+          ...(hasLines ? current.lines.flatMap((l) => l.geometry.coordinates) : []),
+        ];
     const padding: PaddingOptions = {
       top: TOP_INSET,
       bottom: bottomInset + BOTTOM_EXTRA,
@@ -140,7 +216,7 @@ export default function MapView({ start, stops, highlightId, bottomInset }: Prop
       for (const p of points) bounds.extend(p);
       map.fitBounds(bounds, { padding, absolutePadding: true, maxZoom: MAX_FIT_ZOOM, duration });
     }
-  }, [startKnown, stopsKey, bottomInset]);
+  }, [startKnown, visitsKey, hasLines, focusLeg, bottomInset]);
 
   if (!key) {
     return <p className={styles.error}>Carte indisponible : clé MapTiler manquante.</p>;
@@ -155,11 +231,19 @@ export default function MapView({ start, stops, highlightId, bottomInset }: Prop
   );
 }
 
-/** Pastille blanche numérotée ; la dernière étape ajoutée est un point noir avec son nom. */
-function renderStopMarker(el: HTMLElement, stop: Stop, num: number, highlighted: boolean) {
+const collection = (features: LineFeature[]) => ({ type: "FeatureCollection" as const, features });
+
+/**
+ * Pastille numérotée : blanche avant calcul, pleine à la couleur de son tronçon après.
+ * La dernière étape ajoutée est un point noir avec son nom.
+ */
+function renderStopMarker(el: HTMLElement, stop: Stop, num: number, highlighted: boolean, color: string | null) {
   // classList et pas className : MapLibre a posé ses propres classes sur l'élément.
   el.classList.toggle(styles.stop, !highlighted);
   el.classList.toggle(styles.newStop, highlighted);
+  el.classList.toggle(styles.colored, color !== null && !highlighted);
+  el.style.setProperty("--leg-color", color);
+  el.style.setProperty("--leg-text", color && textColorOn(color));
   el.setAttribute("aria-label", `Étape ${num} : ${stop.name}`);
   if (highlighted) {
     const label = document.createElement("span");
