@@ -19,10 +19,10 @@ La police Switzer (Fontshare, licence ITF) n'est pas versionnée : sa licence in
 | Variable | Où | Rôle |
 |---|---|---|
 | `ORS_API_KEY` | serveur | Itinéraires, matrices de durées, recherche de lieux (OpenRouteService) |
-| `NEXT_PUBLIC_MAPTILER_KEY` | navigateur | Fond de carte. À restreindre aux domaines du site dans MapTiler. |
+| `NEXT_PUBLIC_MAPTILER_KEY` | navigateur | Fond de carte et recherche de commerces. À restreindre aux domaines du site dans MapTiler. |
 | `NEXT_PUBLIC_SITE_URL` | les deux | URL publique, sans slash final (canonical, sitemap, Open Graph) |
 
-La recherche d'adresses (Géoplateforme IGN) ne demande pas de clé. Elle passe par `/api/geocode`, qui limite le débit par adresse IP et met les réponses en cache.
+La recherche combine les adresses (Géoplateforme IGN, sans clé, via `/api/geocode` qui limite le débit par adresse IP et met les réponses en cache) et les commerces (géocodage MapTiler, avec la clé de la carte).
 
 ## Vérifications avant livraison
 

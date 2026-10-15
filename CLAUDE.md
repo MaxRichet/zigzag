@@ -18,7 +18,7 @@ Pas de compte utilisateur en V1. L'app doit être utilisable immédiatement à l
 - **Pas de « trafic en temps réel »** : ORS ne le gère pas, ce texte du handoff est retiré.
 - **Catégories de services** : une liste fusionnée (handoff + brief), dans `lib/services-config.ts`. La pause déjeuner n'a pas de contrainte horaire en V1.
 - **Mode « Avant l'adresse X » et option « arrivée fixe »** : gardés, à dessiner dans le langage visuel du handoff.
-- **Recherche : adresses uniquement** (Géoplateforme IGN). Pas de recherche par nom de commerce en V1.
+- **Recherche : adresses + lieux et commerces** (décision du 16/10/2026, remplace « adresses uniquement ») : adresses via la Géoplateforme IGN (proxy `/api/geocode`), commerces (« carrefour paris ») via le géocodage MapTiler limité aux points d'intérêt, appelé depuis le navigateur avec la clé publique. Une seule liste de suggestions.
 - **Géocodage** : `https://data.geopf.fr/geocodage/` (l'ancienne `api-adresse.data.gouv.fr` est fermée depuis fin janvier 2026).
 - **Police** : Switzer, auto-hébergée avec `next/font/local`.
 - **Tests** : Vitest sur les fonctions pures de `lib/`.
