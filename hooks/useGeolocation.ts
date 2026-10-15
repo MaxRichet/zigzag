@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-export type LngLat = [number, number];
+import type { LngLat } from "@/lib/geo";
 
 export type GeolocationState =
   | { status: "pending"; position: null }

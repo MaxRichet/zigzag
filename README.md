@@ -22,11 +22,14 @@ La police Switzer (Fontshare, licence ITF) n'est pas versionnée : sa licence in
 | `NEXT_PUBLIC_MAPTILER_KEY` | navigateur | Fond de carte. À restreindre aux domaines du site dans MapTiler. |
 | `NEXT_PUBLIC_SITE_URL` | les deux | URL publique, sans slash final (canonical, sitemap, Open Graph) |
 
+La recherche d'adresses (Géoplateforme IGN) ne demande pas de clé. Elle passe par `/api/geocode`, qui limite le débit par adresse IP et met les réponses en cache.
+
 ## Vérifications avant livraison
 
 ```sh
 npm run lint
 npx tsc --noEmit
+npm test          # Vitest, logique de lib/
 npm run build
 ```
 

@@ -35,3 +35,55 @@
   right: 16px;
   font-weight: 600;
 }
+
+/* Étape saisie (ordre pas encore optimisé) : pastille blanche, bordure noire, numéro. */
+.stop {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 3px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 14px/1 var(--font-switzer), system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+/* Dernière étape ajoutée : point noir et étiquette à sa gauche (jamais sous la barre de recherche). */
+.newStop {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 3px solid var(--white);
+  box-shadow: 0 0 0 2px var(--ink);
+}
+
+.label {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 6px);
+  transform: translateY(-50%);
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 8px 10px;
+  margin-right: 8px;
+  background: var(--ink);
+  color: var(--white);
+  font: 600 13px/1 var(--font-switzer), system-ui, sans-serif;
+}
+
+/* Flèche de l'étiquette, vers le point. */
+.newStop::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 6px);
+  transform: translateY(-50%);
+  border-block: 7px solid transparent;
+  border-left: 8px solid var(--ink);
+}
