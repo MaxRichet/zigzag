@@ -43,3 +43,6 @@ next-env.d.ts
 
 # brief de direction artistique (document de travail, hors dépôt)
 DESIGN.md
+
+# police Switzer : licence ITF, pas de redistribution (récupérée par scripts/fetch-fonts.mjs)
+/app/fonts/

@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
 import {
   SITE_DESCRIPTION,
   SITE_LOCALE,
@@ -10,6 +11,13 @@ import {
   webApplicationJsonLd,
 } from "@/lib/seo";
 import "./globals.css";
+
+const switzer = localFont({
+  src: "./fonts/Switzer-Variable.woff2",
+  weight: "100 900",
+  variable: "--font-switzer",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -41,7 +49,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="fr">
+    <html lang="fr" className={switzer.variable}>
       <body>
         {children}
         <script

@@ -1,0 +1,61 @@
+.app {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--map-ground);
+}
+
+/* Panneau bas : collé en bas, fond blanc, filet noir 2px. */
+.panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--white);
+  border-top: 2px solid var(--ink);
+  padding: 16px 20px max(20px, env(safe-area-inset-bottom));
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.logo {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.meta {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.text {
+  margin-top: 8px;
+  text-wrap: pretty;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--text-2);
+}
+
+.notice {
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}

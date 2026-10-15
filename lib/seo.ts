@@ -15,7 +15,8 @@ export const SITE_URL = (
 
 export const SITE_LOCALE = "fr_FR";
 
-export const THEME_COLOR = "#111111";
+// Couleur du sol de la carte : la barre d'état se fond dans la carte.
+export const THEME_COLOR = "#EEEFEC";
 
 /** Sérialise un objet JSON-LD sans risque d'injection HTML. */
 export function jsonLd(data: object): string {

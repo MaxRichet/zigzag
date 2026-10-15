@@ -1,3 +1,18 @@
+/* Tokens du handoff Claude Design (design_handoff_zigzag/README.md) */
+:root {
+  --ink: #111111;
+  --white: #ffffff;
+  --text-2: #4a4a4a;
+  --text-3: #555555;
+  --neutral: #e4e4e1;
+  --neutral-text: #5e5e5b;
+  --dashed: #9a9a96;
+  --rail: #d6d6d2;
+  --hover: #f3f3f1;
+  --ink-line: #444444;
+  --map-ground: #eeefec;
+}
+
 *,
 *::before,
 *::after {
@@ -12,9 +27,18 @@ body {
 }
 
 body {
-  background: #ffffff;
-  color: #111111;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font-switzer), system-ui, sans-serif;
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

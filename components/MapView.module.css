@@ -1,0 +1,37 @@
+.map {
+  position: absolute;
+  inset: 0;
+}
+
+/* Les contrôles du bas (attribution) restent au-dessus du panneau. */
+.map :global(.maplibregl-ctrl-bottom-right),
+.map :global(.maplibregl-ctrl-bottom-left) {
+  bottom: var(--inset-bottom, 0);
+}
+
+/* Départ : carré noir, bordure blanche, anneau noir, point blanc au centre. */
+.start {
+  width: 24px;
+  height: 24px;
+  background: var(--ink);
+  border: 3px solid var(--white);
+  box-shadow: 0 0 0 2px var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.start::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: var(--white);
+}
+
+.error {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  font-weight: 600;
+}

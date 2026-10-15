@@ -12,6 +12,8 @@ cp .env.example .env.local   # puis remplir les clés
 npm run dev                  # http://localhost:3000
 ```
 
+La police Switzer (Fontshare, licence ITF) n'est pas versionnée : sa licence interdit de la redistribuer via un dépôt public. `scripts/fetch-fonts.mjs` la télécharge automatiquement avant `dev` et `build`.
+
 ## Variables d'environnement
 
 | Variable | Où | Rôle |
