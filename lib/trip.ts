@@ -207,6 +207,8 @@ export function textColorOn(hex: string): string {
 
 // --- Sauvegarde locale ---
 
+export const STORAGE_KEY = "zigzag:trip";
+
 const isNumber = (n: unknown): n is number => typeof n === "number" && Number.isFinite(n);
 
 function isStop(s: unknown): s is Stop {

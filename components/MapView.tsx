@@ -9,7 +9,7 @@ import {
   type PaddingOptions,
 } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { LngLat } from "@/lib/geo";
 import { mapStyle } from "@/lib/map-style";
 import { serviceCategory } from "@/lib/services-config";
@@ -52,7 +52,8 @@ type Props = {
 
 export default function MapView({ start, visits, highlightId, colored, lines, focusLeg, bottomInset }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<MapLibreMap | null>(null);
+  // État et non ref : la carte arrive après le premier rendu, les effets suivants doivent alors s'exécuter.
+  const [map, setMap] = useState<MapLibreMap | null>(null);
   const startMarkerRef = useRef<Marker | null>(null);
   const stopMarkersRef = useRef(new Map<string, Marker>());
   const latest = useRef({ start, visits, lines, focusLeg });
@@ -61,65 +62,24 @@ export default function MapView({ start, visits, highlightId, colored, lines, fo
 
   // La carte est créée une seule fois ; les effets suivants la mettent à jour.
   useEffect(() => {
-    if (!key || !containerRef.current) return;
-    const map = new MapLibreMap({
-      container: containerRef.current,
-      style: mapStyle(key),
-      bounds: FRANCE,
-      attributionControl: { compact: true },
-      dragRotate: false,
-      pitchWithRotate: false,
-      maxPitch: 0,
+    const container = containerRef.current;
+    if (!key || !container) return;
+    let created: MapLibreMap | null = null;
+    // Créer le contexte WebGL et lire le style est lourd : on laisse d'abord le navigateur
+    // afficher la page (après la prochaine image), pour ne pas retarder le texte du panneau.
+    let timer = 0;
+    const frame = requestAnimationFrame(() => {
+      timer = window.setTimeout(() => {
+        created = createMap(container, key, () => latest.current.lines);
+        setMap(created);
+      });
     });
-    map.touchZoomRotate.disableRotation();
-    map.keyboard.disableRotation();
-    map.on("load", () => {
-      map.addSource(LINES, { type: "geojson", data: collection(latest.current.lines) });
-      const solid = ["!", ["get", "draft"]] as ["!", ["get", string]];
-      // Liseré blanc 12px sous un trait de 7px à la couleur du tronçon, angles vifs.
-      map.addLayer(
-        {
-          id: "route-casing",
-          type: "line",
-          source: LINES,
-          filter: solid,
-          layout: { "line-join": "miter", "line-cap": "butt" },
-          paint: { "line-color": "#FFFFFF", "line-width": 12, "line-opacity": ["get", "opacity"] },
-        },
-        LINES_BEFORE,
-      );
-      map.addLayer(
-        {
-          id: "route-line",
-          type: "line",
-          source: LINES,
-          filter: solid,
-          layout: { "line-join": "miter", "line-cap": "butt" },
-          paint: { "line-color": ["get", "color"], "line-width": 7, "line-opacity": ["get", "opacity"] },
-        },
-        LINES_BEFORE,
-      );
-      map.addLayer(
-        {
-          id: "route-draft",
-          type: "line",
-          source: LINES,
-          filter: ["get", "draft"],
-          paint: {
-            "line-color": ["get", "color"],
-            "line-width": 3,
-            "line-opacity": ["get", "opacity"],
-            "line-dasharray": [2, 1.33],
-          },
-        },
-        LINES_BEFORE,
-      );
-    });
-    mapRef.current = map;
     const stopMarkers = stopMarkersRef.current;
     return () => {
-      map.remove();
-      mapRef.current = null;
+      cancelAnimationFrame(frame);
+      clearTimeout(timer);
+      created?.remove();
+      setMap(null);
       startMarkerRef.current = null;
       stopMarkers.clear();
       framedRef.current = false;
@@ -132,7 +92,6 @@ export default function MapView({ start, visits, highlightId, colored, lines, fo
 
   // Départ : carré noir.
   useEffect(() => {
-    const map = mapRef.current;
     if (!map) return;
     if (!start) {
       startMarkerRef.current?.remove();
@@ -147,11 +106,10 @@ export default function MapView({ start, visits, highlightId, colored, lines, fo
     } else {
       startMarkerRef.current.setLngLat(start);
     }
-  }, [start]);
+  }, [map, start]);
 
   // Étapes : pastilles numérotées, synchronisées avec la liste (sans recréer celles qui restent).
   useEffect(() => {
-    const map = mapRef.current;
     if (!map) return;
     const markers = stopMarkersRef.current;
     const ids = new Set(visits.map((s) => s.id));
@@ -173,14 +131,14 @@ export default function MapView({ start, visits, highlightId, colored, lines, fo
       }
       renderStopMarker(marker.getElement(), stop, number, stop.id === highlightId, colored ? legColor(i) : null);
     });
-  }, [visits, highlightId, colored]);
+  }, [map, visits, highlightId, colored]);
 
   // Tracé (ou trait provisoire pendant le calcul).
   useEffect(() => {
-    const source = mapRef.current?.getSource<GeoJSONSource>(LINES);
+    const source = map?.getSource<GeoJSONSource>(LINES);
     // Avant le chargement du style, la source sera créée avec les dernières lignes (voir « load »).
     source?.setData(collection(lines));
-  }, [lines]);
+  }, [map, lines]);
 
   // Cadrage : seulement quand l'ensemble des points change (pas à chaque mouvement de l'utilisateur
   // ni quand on réordonne), ou quand le panneau change de hauteur. Entre-temps, la carte est libre.
@@ -191,7 +149,6 @@ export default function MapView({ start, visits, highlightId, colored, lines, fo
     .join("|");
   const hasLines = lines.length > 0 && !lines[0].properties.draft;
   useEffect(() => {
-    const map = mapRef.current;
     if (!map) return;
     const current = latest.current;
     const focused = current.focusLeg !== null ? current.lines[current.focusLeg] : undefined;
@@ -219,7 +176,7 @@ export default function MapView({ start, visits, highlightId, colored, lines, fo
       for (const p of points) bounds.extend(p);
       map.fitBounds(bounds, { padding, absolutePadding: true, maxZoom: MAX_FIT_ZOOM, duration });
     }
-  }, [startKnown, visitsKey, hasLines, focusLeg, bottomInset]);
+  }, [map, startKnown, visitsKey, hasLines, focusLeg, bottomInset]);
 
   if (!key) {
     return <p className={styles.error}>Carte indisponible : clé MapTiler manquante.</p>;
@@ -260,4 +217,62 @@ function renderStopMarker(el: HTMLElement, stop: Visit, num: number, highlighted
   } else {
     el.textContent = String(num);
   }
+}
+
+/** Carte au style Zigzag, rotation désactivée, avec les calques du tracé (ajoutés au chargement du style). */
+function createMap(container: HTMLElement, key: string, getLines: () => LineFeature[]): MapLibreMap {
+  const map = new MapLibreMap({
+    container,
+    style: mapStyle(key),
+    bounds: FRANCE,
+    attributionControl: { compact: true },
+    dragRotate: false,
+    pitchWithRotate: false,
+    maxPitch: 0,
+  });
+  map.touchZoomRotate.disableRotation();
+  map.keyboard.disableRotation();
+  map.on("load", () => {
+    map.addSource(LINES, { type: "geojson", data: collection(getLines()) });
+    const solid = ["!", ["get", "draft"]] as ["!", ["get", string]];
+    // Liseré blanc 12px sous un trait de 7px à la couleur du tronçon, angles vifs.
+    map.addLayer(
+      {
+        id: "route-casing",
+        type: "line",
+        source: LINES,
+        filter: solid,
+        layout: { "line-join": "miter", "line-cap": "butt" },
+        paint: { "line-color": "#FFFFFF", "line-width": 12, "line-opacity": ["get", "opacity"] },
+      },
+      LINES_BEFORE,
+    );
+    map.addLayer(
+      {
+        id: "route-line",
+        type: "line",
+        source: LINES,
+        filter: solid,
+        layout: { "line-join": "miter", "line-cap": "butt" },
+        paint: { "line-color": ["get", "color"], "line-width": 7, "line-opacity": ["get", "opacity"] },
+      },
+      LINES_BEFORE,
+    );
+    map.addLayer(
+      {
+        id: "route-draft",
+        type: "line",
+        source: LINES,
+        filter: ["get", "draft"],
+        paint: {
+          "line-color": ["get", "color"],
+          "line-width": 3,
+          "line-opacity": ["get", "opacity"],
+          "line-dasharray": [2, 1.33],
+        },
+      },
+      LINES_BEFORE,
+    );
+  });
+  return map;
 }

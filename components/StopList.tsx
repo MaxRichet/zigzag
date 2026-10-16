@@ -58,19 +58,20 @@ export default function StopList({ stops, firstIsStart, onMove, onRemove }: Prop
   );
 }
 
-/** Ligne vide de l'écran d'ouverture : départ (si la position est connue) puis « Première étape ». */
-export function EmptyRoute({ hasStart }: { hasStart: boolean }) {
+/**
+ * Ligne vide de l'écran d'ouverture : départ puis « Première étape ».
+ * Sans position, la première adresse saisie sera le départ (même hauteur, pour ne rien décaler).
+ */
+export function EmptyRoute({ fromPosition }: { fromPosition: boolean }) {
   return (
     <ol className={styles.empty}>
-      {hasStart && (
-        <li className={styles.departure}>
-          <span className={styles.square} aria-hidden="true" />
-          <span className={styles.departureName}>Départ · Ma position</span>
-        </li>
-      )}
-      <li className={styles.placeholder} data-first={!hasStart || undefined}>
+      <li className={styles.departure}>
+        <span className={styles.square} aria-hidden="true" />
+        <span className={styles.departureName}>Départ · {fromPosition ? "Ma position" : "Première adresse"}</span>
+      </li>
+      <li className={styles.placeholder}>
         <span className={styles.ghost} aria-hidden="true" />
-        Première étape
+        {fromPosition ? "Première étape" : "Étape suivante"}
       </li>
     </ol>
   );

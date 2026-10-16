@@ -178,10 +178,6 @@
   border-left: 3px dashed var(--dashed);
 }
 
-.placeholder[data-first]::before {
-  display: none;
-}
-
 .ghost {
   position: relative;
   width: 28px;

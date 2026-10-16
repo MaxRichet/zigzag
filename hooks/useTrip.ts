@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useReducer } from "react";
-import { initialTrip, parseStoredTrip, storedTrip, tripReducer } from "@/lib/trip";
-
-const STORAGE_KEY = "zigzag:trip";
+import { initialTrip, parseStoredTrip, STORAGE_KEY, storedTrip, tripReducer } from "@/lib/trip";
 
 /** État de la tournée, conservé dans le navigateur pour survivre à un rechargement. */
 export function useTrip() {
@@ -28,5 +26,6 @@ export function useTrip() {
     }
   }, [trip]);
 
-  return { trip, dispatch };
+  // La lecture du stockage crée toujours un nouvel état : tant qu'on a l'état initial, elle n'a pas eu lieu.
+  return { trip, dispatch, hydrated: trip !== initialTrip };
 }

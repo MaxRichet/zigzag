@@ -19,7 +19,7 @@ const MapView = dynamic(() => import("./MapView"), { ssr: false });
 
 export default function TripApp() {
   const geo = useGeolocation();
-  const { trip, dispatch } = useTrip();
+  const { trip, dispatch, hydrated } = useTrip();
   const now = useNow();
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -62,9 +62,7 @@ export default function TripApp() {
   const lastAdded = mode === "edit" && stops.at(-1)?.id === trip.lastAddedId ? trip.lastAddedId : null;
   const geoNotice =
     (geo.status === "denied" || geo.status === "unavailable") && !geo.position
-      ? stops.length
-        ? "Position indisponible : la tournée partira de la première adresse."
-        : "Position indisponible : la carte reste centrée sur la France."
+      ? "Position indisponible : la tournée partira de la première adresse."
       : null;
   const error = routing.state.status === "error" ? routing.state : null;
 
@@ -118,6 +116,7 @@ export default function TripApp() {
         ref={panelRef}
         className={styles.panel}
         data-hidden={searchOpen || undefined}
+        data-ready={(hydrated && now !== null) || undefined}
         aria-labelledby="trip-title"
       >
         <header className={styles.panelHeader}>

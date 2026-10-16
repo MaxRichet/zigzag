@@ -71,6 +71,11 @@
   visibility: hidden;
 }
 
+/* Tournée enregistrée (script de app/page.tsx) : le panneau attend d'afficher la vraie tournée. */
+:global(main[data-trip]) .panel:not([data-ready]) {
+  visibility: hidden;
+}
+
 .newStop {
   margin-top: 10px;
   padding-top: 14px;

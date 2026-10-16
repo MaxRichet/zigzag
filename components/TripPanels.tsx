@@ -49,15 +49,11 @@ export function EditPanel({
         <h2 id="trip-title" className={styles.title}>
           Aucune adresse
         </h2>
-        <p className={styles.text}>
-          Ajoutez les adresses de vos visites du jour. Zigzag trouve l&apos;ordre le plus rapide.
+        {/* Le message de position remplace le texte, à hauteur égale : le panneau ne bouge pas. */}
+        <p className={styles.text} role={geoNotice ? "status" : undefined}>
+          {geoNotice ?? "Ajoutez les adresses de vos visites du jour. Zigzag trouve l'ordre le plus rapide."}
         </p>
-        <EmptyRoute hasStart={hasPosition} />
-        {geoNotice && (
-          <p className={styles.notice} role="status">
-            {geoNotice}
-          </p>
-        )}
+        <EmptyRoute fromPosition={!geoNotice} />
         <button type="button" className={styles.primary} disabled>
           Optimiser l&apos;ordre
         </button>
